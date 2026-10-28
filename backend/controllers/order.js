@@ -1,5 +1,7 @@
 const Order = require('../models/order');
 const Product = require('../models/product');
+const sendEmail = require('../utils/sendEmail');
+const PDFDocument = require('pdfkit');
 
 
 
@@ -99,13 +101,77 @@ exports.updateOrder = async (req, res, next) => {
         })
     }
 
-    order.orderItems.forEach(async item => {
-        await updateStock(item.product, item.quantity)
-    })
+    if (req.body.status === 'Delivered') {
+        order.orderItems.forEach(async item => {
+            await updateStock(item.product, item.quantity)
+        })
+    }
 
     order.orderStatus = req.body.status
     order.deliveredAt = Date.now()
     await order.save()
+
+    await order.populate('user', 'name email')
+
+    let rows = ''
+    order.orderItems.forEach(item => {
+        rows += `<tr>
+            <td>${item.name}</td>
+            <td>${item.quantity}</td>
+            <td>$${item.price.toFixed(2)}</td>
+            <td>$${(item.price * item.quantity).toFixed(2)}</td>
+        </tr>`
+    })
+
+    const html = `<p>Hi ${order.user.name},</p>
+        <p>Your order <b>${order._id}</b> is now: <b>${order.orderStatus}</b></p>
+        <table border="1" cellpadding="5" cellspacing="0">
+            <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Subtotal</th>
+            </tr>
+            ${rows}
+        </table>
+        <p>Items: $${order.itemsPrice.toFixed(2)}</p>
+        <p>Shipping: $${order.shippingPrice.toFixed(2)}</p>
+        <p>Tax: $${order.taxPrice.toFixed(2)}</p>
+        <p><b>Grand Total: $${order.totalPrice.toFixed(2)}</b></p>
+        <p>Your receipt is attached as a PDF.</p>`
+
+    const doc = new PDFDocument()
+    doc.fontSize(18).text('Order Receipt')
+    doc.fontSize(12).text(`Order ID: ${order._id}`)
+    doc.text(`Customer: ${order.user.name}`)
+    doc.text(`Status: ${order.orderStatus}`)
+    doc.moveDown()
+    order.orderItems.forEach(item => {
+        doc.text(`${item.name} - ${item.quantity} x $${item.price.toFixed(2)} = $${(item.price * item.quantity).toFixed(2)}`)
+    })
+    doc.moveDown()
+    doc.text(`Items: $${order.itemsPrice.toFixed(2)}`)
+    doc.text(`Shipping: $${order.shippingPrice.toFixed(2)}`)
+    doc.text(`Tax: $${order.taxPrice.toFixed(2)}`)
+    doc.text(`Grand Total: $${order.totalPrice.toFixed(2)}`)
+    doc.end()
+
+    try {
+        await sendEmail({
+            email: order.user.email,
+            subject: `Order ${order._id} - ${order.orderStatus}`,
+            html,
+            attachments: [
+                {
+                    filename: `receipt-${order._id}.pdf`,
+                    content: doc
+                }
+            ]
+        })
+    } catch (error) {
+        console.log(error)
+    }
+
     res.status(200).json({
         success: true,
     })
@@ -161,7 +227,19 @@ exports.totalSales = async (req, res, next) => {
 }
 
 exports.customerSales = async (req, res, next) => {
-    const customerSales = await Order.aggregate([
+    const { startDate, endDate } = req.query;
+    let dateMatch = null;
+    if (startDate || endDate) {
+        dateMatch = { paidAt: {} };
+        if (startDate) {
+            dateMatch.paidAt.$gte = new Date(`${startDate}T00:00:00`);
+        }
+        if (endDate) {
+            dateMatch.paidAt.$lte = new Date(`${endDate}T23:59:59.999`);
+        }
+    }
+
+    const pipeline = [
         {
             $lookup: {
                 from: 'users',
@@ -207,7 +285,11 @@ exports.customerSales = async (req, res, next) => {
         },
         { $sort: { total: 1 } },
 
-    ])
+    ]
+    if (dateMatch) {
+        pipeline.unshift({ $match: dateMatch });
+    }
+    const customerSales = await Order.aggregate(pipeline)
     console.log(customerSales)
     if (!customerSales) {
         return res.status(404).json({
@@ -228,7 +310,19 @@ exports.salesPerMonth = async (req, res, next) => {
     // select monthname(paidAt) sum(price * quantity)
     // from orders
     // group by month(date_placed), year(date_placed)
-    const salesPerMonth = await Order.aggregate([
+    const { startDate, endDate } = req.query;
+    let dateMatch = null;
+    if (startDate || endDate) {
+        dateMatch = { paidAt: {} };
+        if (startDate) {
+            dateMatch.paidAt.$gte = new Date(`${startDate}T00:00:00`);
+        }
+        if (endDate) {
+            dateMatch.paidAt.$lte = new Date(`${endDate}T23:59:59.999`);
+        }
+    }
+
+    const pipeline = [
 
         {
             $group: {
@@ -246,7 +340,7 @@ exports.salesPerMonth = async (req, res, next) => {
                 month: {
                     $let: {
                         vars: {
-                            monthsInString: [, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', ' Sept', 'Oct', 'Nov', 'Dec']
+                            monthsInString: [, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
                         },
                         in: {
                             $arrayElemAt: ['$$monthsInString', "$_id.month"]
@@ -255,7 +349,7 @@ exports.salesPerMonth = async (req, res, next) => {
                 }
             }
         },
-        { $sort: { "_id.month": 1 } },
+        { $sort: { "_id.year": 1, "_id.month": 1 } },
         {
             $project: {
                 _id: 0,
@@ -264,7 +358,11 @@ exports.salesPerMonth = async (req, res, next) => {
             }
         }
 
-    ])
+    ]
+    if (dateMatch) {
+        pipeline.unshift({ $match: dateMatch });
+    }
+    const salesPerMonth = await Order.aggregate(pipeline)
     if (!salesPerMonth) {
         return res.status(404).json({
             message: 'error sales per month',

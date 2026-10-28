@@ -4,22 +4,21 @@ import MetaData from '../Layout/MetaData'
 import { Carousel } from 'react-bootstrap'
 
 import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios'
 import ListReviews from '../Review/ListReviews';
 
-import { getUser, getToken, successMsg, errMsg } from '../Utils/helpers'
+import { successMsg, errMsg } from '../Utils/helpers'
 import { useDispatch, useSelector } from 'react-redux'
-import { getProductDetails, clearErrors, } from '../../actions/productActions'
+import { getProductDetails, newReview, clearErrors, } from '../../actions/productActions'
 import { addItemToCart } from '../../actions/cartActions'
+import { NEW_REVIEW_RESET } from '../../constants/productConstants'
 const ProductDetails = () => {
     // const [product, setProduct] = useState({})
     const { loading, error, product } = useSelector(state => state.productDetails);
+    const { user } = useSelector(state => state.auth)
+    const { error: reviewError, success } = useSelector(state => state.newReview)
     const [quantity, setQuantity] = useState(1)
-    const [user, setUser] = useState(getUser())
     const [rating, setRating] = useState(0)
     const [comment, setComment] = useState('')
-    const [errorReview, setErrorReview] = useState('');
-    const [success, setSuccess] = useState('')
     let { id } = useParams()
     const dispatch = useDispatch()
     // const productDetails = async (id) => {
@@ -54,8 +53,19 @@ const ProductDetails = () => {
 
     function setUserRatings() {
         const stars = document.querySelectorAll('.star');
+        let myReview = null
+        if (product.reviews) {
+            myReview = product.reviews.find(r => r.user === user._id)
+        }
+        if (myReview) {
+            setRating(myReview.rating)
+            setComment(myReview.comment)
+        }
         stars.forEach((star, index) => {
             star.starValue = index + 1;
+            if (myReview && index < myReview.rating) {
+                star.classList.add('orange')
+            }
             ['click', 'mouseover', 'mouseout'].forEach(function (e) {
                 star.addEventListener(e, showRatings);
             })
@@ -84,36 +94,29 @@ const ProductDetails = () => {
         }
     }
 
-    const newReview = async (reviewData) => {
-        try {
-            const config = {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${getToken()}`
-                }
-            }
-
-            const { data } = await axios.put(`${import.meta.env.VITE_API}/review`, reviewData, config)
-            setSuccess(data.success)
-
-        } catch (error) {
-            setErrorReview(error.response.data.message)
-        }
-    }
-
     const reviewHandler = () => {
         const formData = new FormData();
         formData.set('rating', rating);
         formData.set('comment', comment);
         formData.set('productId', id);
-        newReview(formData)
+        dispatch(newReview(formData))
 
     }
 
     useEffect(() => {
         dispatch(getProductDetails(id))
 
-    }, [id,]);
+        if (reviewError) {
+            errMsg(reviewError)
+            dispatch(clearErrors())
+        }
+
+        if (success) {
+            successMsg('Review posted successfully')
+            dispatch({ type: NEW_REVIEW_RESET })
+        }
+
+    }, [dispatch, id, reviewError, success]);
 
     // useEffect(() => {
     //     localStorage.setItem('cartItems', JSON.stringify(cartItems));

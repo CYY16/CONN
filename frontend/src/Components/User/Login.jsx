@@ -1,21 +1,33 @@
-﻿import { useState, useEffect } from 'react'
+﻿import { useEffect } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
 import Loader from '../Layout/Loader'
 import { login, clearErrors } from '../../actions/userActions'
 
 const Login = () => {
     const { isAuthenticated, error, loading } = useSelector(state => state.auth)
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
     const navigate = useNavigate()
     const location = useLocation()
     const dispatch = useDispatch()
 
-    const submitHandler = (e) => {
-        e.preventDefault();
-        dispatch(login(email, password))
-    }
+    const formik = useFormik({
+        initialValues: {
+            email: '',
+            password: ''
+        },
+        validationSchema: Yup.object({
+            email: Yup.string()
+                .email('Invalid email address')
+                .required('Email is required'),
+            password: Yup.string()
+                .required('Password is required')
+        }),
+        onSubmit: (values) => {
+            dispatch(login(values.email, values.password))
+        }
+    })
 
     const redirect = location.search ? new URLSearchParams(location.search).get('redirect') : ''
 
@@ -37,16 +49,32 @@ const Login = () => {
                 <>
                     <div className="row wrapper">
                         <div className="col-10 col-lg-5">
-                            <form className="shadow-lg" onSubmit={submitHandler}>
+                            <form className="shadow-lg" onSubmit={formik.handleSubmit} noValidate>
                                 <h1 className="mb-3">Login</h1>
                                 <div className="form-group">
                                     <label htmlFor="email_field">Email</label>
-                                    <input type="email" id="email_field" className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} />
+                                    <input
+                                        type="email"
+                                        id="email_field"
+                                        className={`form-control ${formik.touched.email && formik.errors.email ? 'is-invalid' : ''}`}
+                                        {...formik.getFieldProps('email')}
+                                    />
+                                    {formik.touched.email && formik.errors.email && (
+                                        <div className="invalid-feedback">{formik.errors.email}</div>
+                                    )}
                                 </div>
 
                                 <div className="form-group">
                                     <label htmlFor="password_field">Password</label>
-                                    <input type="password" id="password_field" className="form-control" value={password} onChange={(e) => setPassword(e.target.value)} />
+                                    <input
+                                        type="password"
+                                        id="password_field"
+                                        className={`form-control ${formik.touched.password && formik.errors.password ? 'is-invalid' : ''}`}
+                                        {...formik.getFieldProps('password')}
+                                    />
+                                    {formik.touched.password && formik.errors.password && (
+                                        <div className="invalid-feedback">{formik.errors.password}</div>
+                                    )}
                                 </div>
 
                                 <Link to="/password/forgot" className="float-right mb-4">Forgot Password?</Link>

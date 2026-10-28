@@ -2,17 +2,18 @@
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import axios from "axios";
 
-export default function MonthlySalesChart() {
+export default function MonthlySalesChart({ startDate, endDate }) {
     const [sales, setSales] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
 
     const monthlySales = async () => {
         try {
+            setLoading(true)
+            setError('')
             const config = {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token') || ''}`
-                }
+                params: { startDate, endDate },
+                withCredentials: true
             }
 
             const { data } = await axios.get(`${import.meta.env.VITE_API}/admin/sales-per-month`, config)
@@ -26,7 +27,7 @@ export default function MonthlySalesChart() {
 
     useEffect(() => {
         monthlySales()
-    }, [])
+    }, [startDate, endDate])
 
     if (loading) {
         return <div className="chart-message">Loading chart...</div>

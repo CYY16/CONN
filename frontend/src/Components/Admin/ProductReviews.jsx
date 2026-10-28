@@ -6,7 +6,7 @@ import Loader from '../Layout/Loader'
 import Sidebar from './SideBar'
 // import Toast from '../Layout/Toast'
 import Swal from 'sweetalert2'
-import { getUser, getToken, errMsg } from '../Utils/helpers'
+import { getUser, errMsg } from '../Utils/helpers'
 import axios from 'axios'
 import { DataGrid, } from '@mui/x-data-grid'
 
@@ -22,9 +22,9 @@ const ProductReviews = () => {
 
     const config = {
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${getToken()}`
-        }
+            'Content-Type': 'application/json'
+        },
+        withCredentials: true
     }
 
     const getProductReviews = async (id) => {
@@ -138,7 +138,7 @@ const ProductReviews = () => {
         id: review._id,
         comment: review.comment,
         rating: review.rating,
-        user: review.user,
+        user: review.name,
     }));
 
 

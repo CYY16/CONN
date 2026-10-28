@@ -17,6 +17,14 @@ const sendEmail = async options => {
         html: `<p>${options.message}</p>`
     }
 
+    if (options.html) {
+        message.html = options.html
+    }
+
+    if (options.attachments) {
+        message.attachments = options.attachments
+    }
+
     await transporter.sendMail(message)
 }
 
