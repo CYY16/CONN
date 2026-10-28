@@ -121,7 +121,7 @@ const ProductsList = () => {
 
         }
 
-    }, [error, deleteError,])
+    }, [dispatch, error, deleteError, isDeleted, navigate])
 
     const columns = [
         {
