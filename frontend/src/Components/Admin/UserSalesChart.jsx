@@ -12,17 +12,18 @@ import {
 } from "recharts";
 import axios from "axios";
 
-const UserSalesChart = () => {
+const UserSalesChart = ({ startDate, endDate }) => {
     const [sales, setSales] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
 
     const userSales = async () => {
         try {
+            setLoading(true)
+            setError('')
             const config = {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token') || ''}`
-                }
+                params: { startDate, endDate },
+                withCredentials: true
             }
 
             const { data } = await axios.get(`${import.meta.env.VITE_API}/admin/customer-sales`, config)
@@ -38,7 +39,7 @@ const UserSalesChart = () => {
 
     useEffect(() => {
         userSales()
-    }, [])
+    }, [startDate, endDate])
 
     return (
         loading ? <div className="chart-message">Loading chart...</div> :

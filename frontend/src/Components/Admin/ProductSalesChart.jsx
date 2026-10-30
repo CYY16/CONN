@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react'
-import { getToken } from "../Utils/helpers";
 import axios from "axios";
 
 import { PieChart, Pie, Legend, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
-export default function ProductSalesChart() {
+export default function ProductSalesChart({ startDate, endDate }) {
     const [sales, setSales] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
@@ -18,11 +17,11 @@ export default function ProductSalesChart() {
 
     const productSales = async () => {
         try {
+            setLoading(true)
+            setError('')
             const config = {
-                headers: {
-
-                    'Authorization': `Bearer ${getToken()}`
-                }
+                params: { startDate, endDate },
+                withCredentials: true
             }
 
             const { data } = await axios.get(`${import.meta.env.VITE_API}/admin/product-sales`, config)
@@ -35,7 +34,7 @@ export default function ProductSalesChart() {
     }
     useEffect(() => {
         productSales()
-    }, [])
+    }, [startDate, endDate])
 
 
     if (loading) {

@@ -2,6 +2,7 @@ const Product = require('../models/product')
 const Order = require('../models/order')
 const cloudinary = require('cloudinary')
 const APIFeatures = require('../utils/apiFeatures');
+const Filter = require('bad-words');
 
 exports.newProduct = async (req, res, next) => {
     console.log(req.files)
@@ -82,9 +83,11 @@ exports.getProducts = async (req, res) => {
     const apiFeatures = new APIFeatures(Product.find(), req.query).search().filter()
     // .filter()
 
-    apiFeatures.pagination(resPerPage);
-    const products = await apiFeatures.query;
+    let products = await apiFeatures.query;
     let filteredProductsCount = products.length;
+
+    apiFeatures.pagination(resPerPage);
+    products = await apiFeatures.query.clone();
     // const products = await apiFeatures.query;
 
     if (!products)
@@ -173,6 +176,14 @@ exports.deleteProduct = async (req, res, next) => {
     })
 }
 
+exports.deleteProducts = async (req, res, next) => {
+    await Product.deleteMany({ _id: { $in: req.body.ids } });
+
+    return res.status(200).json({
+        success: true
+    })
+}
+
 exports.getAdminProducts = async (req, res, next) => {
 
     const products = await Product.find();
@@ -190,12 +201,24 @@ exports.getAdminProducts = async (req, res, next) => {
 }
 
 exports.createProductReview = async (req, res, next) => {
-    const { rating, comment, productId } = req.body;
+    const { rating, productId } = req.body;
+    let comment = req.body.comment;
+    const filter = new Filter();
+    // bad-words v3 clean() throws on strings with no word characters (e.g. '' or '!!!')
+    if (comment && /\w/.test(comment)) {
+        comment = filter.clean(comment);
+    }
     const review = {
         user: req.user._id,
         name: req.user.name,
         rating: Number(rating),
         comment
+    }
+    const order = await Order.findOne({ user: req.user._id, 'orderItems.product': productId })
+    if (!order) {
+        return res.status(400).json({
+            message: 'Only customers who ordered this product can review it'
+        })
     }
     const product = await Product.findById(productId);
     const isReviewed = product.reviews.find(
@@ -238,7 +261,10 @@ exports.deleteReview = async (req, res, next) => {
     const reviews = product.reviews.filter(review => review._id.toString() !== req.query.id.toString());
     const numOfReviews = reviews.length;
 
-    const ratings = product.reviews.reduce((acc, item) => item.rating + acc, 0) / reviews.length
+    let ratings = 0
+    if (reviews.length > 0) {
+        ratings = reviews.reduce((acc, item) => item.rating + acc, 0) / reviews.length
+    }
 
     await Product.findByIdAndUpdate(req.query.productId, {
         reviews,
@@ -256,7 +282,19 @@ exports.deleteReview = async (req, res, next) => {
 }
 
 exports.productSales = async (req, res, next) => {
-    const totalSales = await Order.aggregate([
+    const { startDate, endDate } = req.query;
+    let dateMatch = null;
+    if (startDate || endDate) {
+        dateMatch = { paidAt: {} };
+        if (startDate) {
+            dateMatch.paidAt.$gte = new Date(`${startDate}T00:00:00`);
+        }
+        if (endDate) {
+            dateMatch.paidAt.$lte = new Date(`${endDate}T23:59:59.999`);
+        }
+    }
+
+    const totalSalesPipeline = [
         {
             $group: {
                 _id: null,
@@ -265,9 +303,14 @@ exports.productSales = async (req, res, next) => {
             },
 
         },
-    ])
+    ]
+    if (dateMatch) {
+        totalSalesPipeline.unshift({ $match: dateMatch });
+    }
+    const totalSales = await Order.aggregate(totalSalesPipeline)
     console.log(totalSales)
-    const sales = await Order.aggregate([
+
+    const salesPipeline = [
         { $project: { _id: 0, "orderItems": 1, totalPrice: true } },
         { $unwind: "$orderItems" },
 
@@ -277,8 +320,22 @@ exports.productSales = async (req, res, next) => {
                 total: { $sum: { $multiply: ["$orderItems.price", "$orderItems.quantity"] } }
             },
         },
-    ])
+    ]
+    if (dateMatch) {
+        salesPipeline.unshift({ $match: dateMatch });
+    }
+    const sales = await Order.aggregate(salesPipeline)
     console.log(sales)
+
+    // no orders in the date range: totalSales is [] and totalSales[0].total below would crash
+    if (totalSales.length === 0) {
+        return res.status(200).json({
+            success: true,
+            totalPercentage: [],
+            sales,
+            totalSales
+        })
+    }
 
     if (!totalSales) {
         return res.status(404).json({

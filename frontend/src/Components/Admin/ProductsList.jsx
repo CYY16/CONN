@@ -10,10 +10,12 @@ import axios from 'axios'
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { DataGrid, } from '@mui/x-data-grid'
+import Swal from 'sweetalert2'
 import { useDispatch, useSelector } from 'react-redux'
 import {
     getAdminProducts,
     deleteProduct,
+    deleteProducts,
     clearErrors,
 } from '../../actions/productActions'
 import { DELETE_PRODUCT_RESET } from '../../constants/productConstants'
@@ -24,6 +26,7 @@ const ProductsList = () => {
     const dispatch = useDispatch();
     const { loading, error, products } = useSelector(state => state.products)
     const { error: deleteError, isDeleted } = useSelector(state => state.product)
+    const [selection, setSelection] = useState({ type: 'include', ids: new Set() })
 
     // const [deleteError, setDeleteError] = useState('')
 
@@ -118,6 +121,7 @@ const ProductsList = () => {
             })
             // navigate('/admin/products');
             dispatch({ type: DELETE_PRODUCT_RESET })
+            setSelection({ type: 'include', ids: new Set() })
 
         }
 
@@ -181,6 +185,23 @@ const ProductsList = () => {
         stock: product.stock,
     }));
 
+    // v9 selection model is { type, ids: Set }; disableRowSelectionExcludeModel keeps it as 'include' so ids = selected rows
+    const selectedIds = Array.from(selection.ids)
+
+    const deleteSelectedHandler = () => {
+        Swal.fire({
+            title: 'Delete Products',
+            icon: 'info',
+            text: `Do you want to delete ${selectedIds.length} selected product(s)`,
+            confirmButtonText: 'Delete',
+            showCancelButton: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                dispatch(deleteProducts(selectedIds))
+            }
+        })
+    }
+
 
 
     return (
@@ -195,6 +216,14 @@ const ProductsList = () => {
                     <>
                         <h1 className="my-5">All Products</h1>
 
+                        <button
+                            className="btn btn-danger mb-3"
+                            disabled={selectedIds.length === 0}
+                            onClick={deleteSelectedHandler}
+                        >
+                            Delete Selected ({selectedIds.length})
+                        </button>
+
                         {loading ? <Loader /> : (
                             <div style={{ width: '100%' }}>
                                 <DataGrid
@@ -203,7 +232,11 @@ const ProductsList = () => {
 
                                     pageSize={5}
                                     rowsPerPageOptions={[5, 10, 25]}
-                                    disableSelectionOnClick
+                                    checkboxSelection
+                                    rowSelectionModel={selection}
+                                    onRowSelectionModelChange={(newSelection) => setSelection(newSelection)}
+                                    disableRowSelectionExcludeModel
+                                    disableRowSelectionOnClick
                                     getRowId={(row) => row.id}
                                     showToolbar
                                 />

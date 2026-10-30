@@ -16,17 +16,24 @@ const Payment = () => {
     // const [loading, setLoading] = useState(true)
     const dispatch = useDispatch();
     const { cartItems, shippingInfo } = useSelector(state => state.cart)
-    const { error, loading } = useSelector(state => state.newOrder)
+    const { error, loading, order: createdOrder } = useSelector(state => state.newOrder)
+    const [submitted, setSubmitted] = useState(false)
     let navigate = useNavigate();
     // useEffect(() => {
     // }, [])
     useEffect(() => {
         if (error) {
             console.log(error)
+            setSubmitted(false)
             dispatch(clearErrors())
         }
 
-    }, [dispatch, error])
+        if (submitted && !loading && !error && createdOrder) {
+            dispatch(clearCart())
+            navigate('/success')
+        }
+
+    }, [dispatch, error, loading, submitted, createdOrder, navigate])
 
     const order = {
         orderItems: cartItems,
@@ -75,7 +82,7 @@ const Payment = () => {
             status: 'succeeded'
         }
         dispatch(createOrder(order))
-        navigate('/success')
+        setSubmitted(true)
     }
 
     return (

@@ -1,4 +1,5 @@
-﻿import { Link } from 'react-router-dom';
+﻿import { useState } from 'react'
+import { Link } from 'react-router-dom';
 
 import MetaData from '../Layout/MetaData'
 import Loader from '../Layout/Loader'
@@ -10,6 +11,8 @@ import { useSelector } from 'react-redux'
 
 const Dashboard = () => {
     const { loading, products } = useSelector(state => state.products)
+    const [startDate, setStartDate] = useState('')
+    const [endDate, setEndDate] = useState('')
 
     const outOfStock = products?.filter(product => product.stock === 0).length || 0;
 
@@ -52,12 +55,34 @@ const Dashboard = () => {
                             </div>
                         </>
                     )}
+                    <div className="row mb-3">
+                        <div className="col-12 col-sm-6 col-md-3 form-group">
+                            <label htmlFor="start_date_field">Start Date</label>
+                            <input
+                                type="date"
+                                id="start_date_field"
+                                className="form-control"
+                                value={startDate}
+                                onChange={(e) => setStartDate(e.target.value)}
+                            />
+                        </div>
+                        <div className="col-12 col-sm-6 col-md-3 form-group">
+                            <label htmlFor="end_date_field">End Date</label>
+                            <input
+                                type="date"
+                                id="end_date_field"
+                                className="form-control"
+                                value={endDate}
+                                onChange={(e) => setEndDate(e.target.value)}
+                            />
+                        </div>
+                    </div>
                     <div className="row dashboard-charts">
                         <div className="col-12 col-xl-6 mb-4">
                             <section className="dashboard-chart-card">
                                 <h2>Product Sales</h2>
                                 <div className="dashboard-chart">
-                                    <ProductSalesChart />
+                                    <ProductSalesChart startDate={startDate} endDate={endDate} />
                                 </div>
                             </section>
                         </div>
@@ -65,7 +90,7 @@ const Dashboard = () => {
                             <section className="dashboard-chart-card">
                                 <h2>Customer Sales</h2>
                                 <div className="dashboard-chart">
-                                    <UserSalesChart />
+                                    <UserSalesChart startDate={startDate} endDate={endDate} />
                                 </div>
                             </section>
                         </div>
@@ -73,7 +98,7 @@ const Dashboard = () => {
                             <section className="dashboard-chart-card">
                                 <h2>Monthly Sales</h2>
                                 <div className="dashboard-chart dashboard-chart-wide">
-                                    <MonthlySalesChart />
+                                    <MonthlySalesChart startDate={startDate} endDate={endDate} />
                                 </div>
                             </section>
                         </div>
