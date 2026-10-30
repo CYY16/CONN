@@ -2,6 +2,9 @@
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import { useEffect } from 'react'
+import { useDispatch } from 'react-redux'
+import { loadUser } from './actions/userActions'
 import { Header } from './Components/Layout/Header'
 import Footer from './Components/Layout/Footer'
 
@@ -36,6 +39,12 @@ import ProtectedRoute from './Components/Route/ProtectedRoute';
 import ProductReviews from './Components/Admin/ProductReviews';
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(loadUser())
+  }, [dispatch])
+
   return (
     <>
       <Router>
