@@ -15,7 +15,7 @@ import { motorcycleCategories } from '../constants/productOptions'
 const Home = () => {
     // console.log(products)
     // const [products, setProducts] = useState([])
-    const [price, setPrice] = useState([1, 1000]);
+    const [price, setPrice] = useState([0, 50000]);
     const [category, setCategory] = useState('')
     const [ratings, setRatings] = useState(0)
     const [numOfReviews, setNumOfReviews] = useState(0)
@@ -148,7 +148,7 @@ const Home = () => {
                                     getAriaValueText={valuetext}
                                     min={1}
                                     max={1000}
-
+                                    step={1000}
                                 />
                             </Box>
                             <div className="mt-5">

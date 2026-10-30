@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom';
 
 import MetaData from '../Layout/MetaData'
@@ -7,12 +7,18 @@ import Sidebar from './SideBar'
 import ProductSalesChart from './ProductSalesChart';
 import UserSalesChart from './UserSalesChart';
 import MonthlySalesChart from './MonthlySalesChart';
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { getAdminProducts } from '../../actions/productActions'
 
 const Dashboard = () => {
+    const dispatch = useDispatch();
     const { loading, products } = useSelector(state => state.products)
     const [startDate, setStartDate] = useState('')
     const [endDate, setEndDate] = useState('')
+
+    useEffect(() => {
+        dispatch(getAdminProducts())
+    }, [dispatch])
 
     const outOfStock = products?.filter(product => product.stock === 0).length || 0;
 
