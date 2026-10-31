@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import Loader from '../Layout/Loader'
-import { login, clearErrors } from '../../actions/userActions'
+import { login, googleLogin, clearErrors } from '../../actions/userActions'
 
 const Login = () => {
     const { isAuthenticated, error, loading } = useSelector(state => state.auth)
@@ -81,6 +81,9 @@ const Login = () => {
                                 <button id="login_button" type="submit" className="btn btn-block py-3">LOGIN</button>
                                 <Link to="/register" className="float-right mt-3">Register Here</Link>
                             </form>
+                            <button type="button" className="btn btn-outline-dark btn-block py-3 mt-3" onClick={() => dispatch(googleLogin())}>
+                                <i className="fa fa-google mr-2"></i> Sign in with Google
+                            </button>
                         </div>
                     </div>
                 </>

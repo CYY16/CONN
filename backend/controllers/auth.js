@@ -3,6 +3,8 @@ const crypto = require('crypto')
 const cloudinary = require('cloudinary')
 const sendEmail = require('../utils/sendEmail')
 const sendToken = require('../utils/jwtToken');
+const { initializeApp, cert, getApps } = require('firebase-admin/app');
+const { getAuth } = require('firebase-admin/auth');
 
 exports.registerUser = async (req, res, next) => {
     console.log(req.body)
@@ -66,6 +68,46 @@ exports.loginUser = async (req, res, next) => {
     //     user
     // });
     user = await User.findOne({ email })
+    sendToken(user, 200, res)
+}
+
+exports.googleLogin = async (req, res, next) => {
+    const { idToken } = req.body;
+
+    // initialise here, not at the top: app.js is required before dotenv loads in server.js
+    if (!getApps().length) {
+        initializeApp({
+            credential: cert({
+                projectId: process.env.FIREBASE_PROJECT_ID,
+                clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+                privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
+            })
+        })
+    }
+
+    let decodedToken;
+    try {
+        decodedToken = await getAuth().verifyIdToken(idToken);
+    } catch (error) {
+        return res.status(401).json({ message: 'Google login failed' })
+    }
+    const { email, name, picture } = decodedToken;
+
+    let user = await User.findOne({ email })
+    if (!user) {
+        await User.create({
+            name,
+            email,
+            password: crypto.randomBytes(20).toString('hex'),
+            avatar: {
+                public_id: 'google',
+                url: picture
+            },
+        })
+        // find again like loginUser, so the hashed password is not sent back
+        user = await User.findOne({ email })
+    }
+
     sendToken(user, 200, res)
 }
 
@@ -159,7 +201,9 @@ exports.updateProfile = async (req, res, next) => {
         let user = await User.findById(req.user.id)
         // console.log(user)
         const image_id = user.avatar.public_id;
-        const res = await cloudinary.v2.uploader.destroy(image_id);
+        if (image_id !== 'google') {
+            const res = await cloudinary.v2.uploader.destroy(image_id);
+        }
         // console.log("Res", res)
         const result = await cloudinary.v2.uploader.upload(req.body.avatar, {
             folder: 'avatars',
@@ -225,7 +269,9 @@ exports.deleteUser = async (req, res, next) => {
 
     // Remove avatar from cloudinary
     const image_id = user.avatar.public_id;
-    await cloudinary.v2.uploader.destroy(image_id);
+    if (image_id !== 'google') {
+        await cloudinary.v2.uploader.destroy(image_id);
+    }
     await User.findByIdAndDelete(req.params.id);
     return res.status(200).json({
         success: true,

@@ -25,3 +25,8 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# env files and Firebase keys
+.env
+*-firebase-adminsdk-*.json
+serviceAccountKey.json

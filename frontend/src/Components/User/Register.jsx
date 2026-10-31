@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import MetaData from '../Layout/MetaData'
 // import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
-import { register, clearErrors } from '../../actions/userActions'
+import { register, googleLogin, clearErrors } from '../../actions/userActions'
 
 
 const defaultAvatar = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9IiNlOWYwZmYiLz48L3N2Zz4=';
@@ -190,6 +190,9 @@ const Register = () => {
                             {loading ? 'REGISTERING...' : 'REGISTER'}
                         </button>
                     </form>
+                    <button type="button" className="btn btn-outline-dark btn-block py-3 mt-3" disabled={loading} onClick={() => dispatch(googleLogin())}>
+                        <i className="fa fa-google mr-2"></i> Sign up with Google
+                    </button>
                 </div>
             </div>
 

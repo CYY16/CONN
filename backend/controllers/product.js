@@ -128,27 +128,31 @@ exports.updateProduct = async (req, res, next) => {
     // } else {
     //     images = req.files
     // }
-    if (typeof req.body.images === 'string') {
-        images.push(req.body.images)
+    if (req.body.images) {
+        if (typeof req.body.images === 'string') {
+            images.push(req.body.images)
+        } else {
+            images = req.body.images
+        }
+        // console.log(images)
+
+        let imagesLinks = [];
+        for (let i = 0; i < images.length; i++) {
+            const result = await cloudinary.v2.uploader.upload(images[i], {
+                folder: 'products',
+                width: 150,
+                crop: "scale",
+            });
+            imagesLinks.push({
+                public_id: result.public_id,
+                url: result.secure_url
+            })
+
+        }
+        req.body.images = imagesLinks
     } else {
-        images = req.body.images
+        delete req.body.images
     }
-    // console.log(images)
-
-    let imagesLinks = [];
-    for (let i = 0; i < images.length; i++) {
-        const result = await cloudinary.v2.uploader.upload(images[i], {
-            folder: 'products',
-            width: 150,
-            crop: "scale",
-        });
-        imagesLinks.push({
-            public_id: result.public_id,
-            url: result.secure_url
-        })
-
-    }
-    req.body.images = imagesLinks
     product = await Product.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
         runValidators: true,

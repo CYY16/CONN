@@ -1,4 +1,6 @@
 import axios from 'axios'
+import { signInWithPopup } from 'firebase/auth'
+import { auth, googleProvider } from '../firebase'
 import {
     LOGIN_REQUEST,
     LOGIN_SUCCESS,
@@ -82,6 +84,32 @@ export const login = (email, password) => async (dispatch) => {
         dispatch({
             type: LOGIN_FAIL,
             payload: error.response.data.message
+        })
+    }
+}
+
+export const googleLogin = () => async (dispatch) => {
+    try {
+        dispatch({ type: LOGIN_REQUEST })
+        const result = await signInWithPopup(auth, googleProvider)
+        const idToken = await result.user.getIdToken()
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            withCredentials: true,
+        }
+
+        const { data } = await axios.post(`${import.meta.env.VITE_API}/google-login`, { idToken }, config)
+        dispatch({
+            type: LOGIN_SUCCESS,
+            payload: data.user
+        })
+    } catch (error) {
+        // popup errors come from Firebase and have no error.response
+        dispatch({
+            type: LOGIN_FAIL,
+            payload: error.response ? error.response.data.message : error.message
         })
     }
 }
