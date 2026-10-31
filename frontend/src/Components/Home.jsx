@@ -15,7 +15,7 @@ import { motorcycleCategories } from '../constants/productOptions'
 const Home = () => {
     // console.log(products)
     // const [products, setProducts] = useState([])
-    const [price, setPrice] = useState([0, 50000]);
+    const [price, setPrice] = useState([0, 10000]);
     const [category, setCategory] = useState('')
     const [ratings, setRatings] = useState(0)
     const [numOfReviews, setNumOfReviews] = useState(0)
@@ -123,7 +123,7 @@ const Home = () => {
     return (
         <>
             <MetaData title={keyword ? 'Search Results' : 'For Sale Units'} />
-            {loading && currentPage === 1 ? <Loader /> : (<div className="container container-fluid">
+            <div className="container container-fluid">
                 <header className="storefront-heading">
                     <h1 id="products_heading">{keyword ? 'Search Results' : 'For Sale Units'}</h1>
                     <p>{keyword ? `Products matching "${keyword}"` : 'Your Next Ride Starts Here.'}</p>
@@ -146,9 +146,9 @@ const Home = () => {
                                     onChange={handleChange}
                                     valueLabelDisplay="on"
                                     getAriaValueText={valuetext}
-                                    min={1}
-                                    max={1000}
-                                    step={1000}
+                                    min={0}
+                                    max={10000}
+                                    step={100}
                                 />
                             </Box>
                             <div className="mt-5">
@@ -223,18 +223,20 @@ const Home = () => {
                         </div>
 
                         <div className="col-6 col-md-9">
-                            <div className="row">
-                                {productList.map(product => (
-                                    <Product key={product._id} product={product} />
-                                ))}
-                            </div>
+                            {loading && currentPage === 1 ? <Loader /> : (
+                                <div className="row">
+                                    {productList.map(product => (
+                                        <Product key={product._id} product={product} />
+                                    ))}
+                                </div>
+                            )}
                             {loading && currentPage > 1 && (
                                 <p className="text-center mt-3">Loading more...</p>
                             )}
                         </div>
                     </div>
                 </section>
-            </div>)}
+            </div>
         </>
     )
 }
