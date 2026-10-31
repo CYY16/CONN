@@ -7,6 +7,8 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // import { getToken } from '../Utils/helpers';
 import { useDispatch, useSelector } from 'react-redux'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
 import { createOrder, clearErrors } from '../../actions/orderActions'
 import { clearCart } from '../../actions/cartActions';
 
@@ -23,13 +25,14 @@ const Payment = () => {
     // }, [])
     useEffect(() => {
         if (error) {
-            console.log(error)
+            toast.error(error, { position: 'bottom-right' });
             setSubmitted(false)
             dispatch(clearErrors())
         }
 
         if (submitted && !loading && !error && createdOrder) {
             dispatch(clearCart())
+            toast.success('Order placed', { position: 'bottom-right' });
             navigate('/success')
         }
 
@@ -74,16 +77,32 @@ const Payment = () => {
     //     }
     // }
 
-    const submitHandler = async (e) => {
-        e.preventDefault();
-        document.querySelector('#pay_btn').disabled = true;
-        order.paymentInfo = {
-            id: 'pi_1DpdYh2eZvKYlo2CYIynhU32',
-            status: 'succeeded'
+    const formik = useFormik({
+        initialValues: {
+            cardNumber: '',
+            expiry: '',
+            cvc: ''
+        },
+        validationSchema: Yup.object({
+            cardNumber: Yup.string()
+                .matches(/^\d{16}$/, 'Card number must be 16 digits')
+                .required('Card number is required'),
+            expiry: Yup.string()
+                .matches(/^(0[1-9]|1[0-2])\/\d{2}$/, 'Expiry must be in MM/YY format')
+                .required('Card expiry is required'),
+            cvc: Yup.string()
+                .matches(/^\d{3,4}$/, 'CVC must be 3 or 4 digits')
+                .required('CVC is required')
+        }),
+        onSubmit: () => {
+            order.paymentInfo = {
+                id: 'pi_1DpdYh2eZvKYlo2CYIynhU32',
+                status: 'succeeded'
+            }
+            dispatch(createOrder(order))
+            setSubmitted(true)
         }
-        dispatch(createOrder(order))
-        setSubmitted(true)
-    }
+    })
 
     return (
         <>
@@ -91,7 +110,7 @@ const Payment = () => {
             <CheckoutSteps shipping confirmOrder payment />
             <div className="row wrapper">
                 <div className="col-10 col-lg-5">
-                    <form className="shadow-lg" onSubmit={submitHandler}>
+                    <form className="shadow-lg" onSubmit={formik.handleSubmit} noValidate>
                         <h1 className="mb-4">Card Info</h1>
                         <div className="form-group">
                             <label htmlFor="card_num_field">Card Number</label>
@@ -99,8 +118,11 @@ const Payment = () => {
                                 type="text"
                                 id="card_num_field"
                                 className="form-control"
-
+                                {...formik.getFieldProps('cardNumber')}
                             />
+                            {formik.touched.cardNumber && formik.errors.cardNumber && (
+                                <small className="text-danger">{formik.errors.cardNumber}</small>
+                            )}
                         </div>
 
                         <div className="form-group">
@@ -109,8 +131,11 @@ const Payment = () => {
                                 type="text"
                                 id="card_exp_field"
                                 className="form-control"
-
+                                {...formik.getFieldProps('expiry')}
                             />
+                            {formik.touched.expiry && formik.errors.expiry && (
+                                <small className="text-danger">{formik.errors.expiry}</small>
+                            )}
                         </div>
 
                         <div className="form-group">
@@ -119,15 +144,21 @@ const Payment = () => {
                                 type="text"
                                 id="card_cvc_field"
                                 className="form-control"
-
+                                {...formik.getFieldProps('cvc')}
                             />
+                            {formik.touched.cvc && formik.errors.cvc && (
+                                <small className="text-danger">{formik.errors.cvc}</small>
+                            )}
                         </div>
                         <button
                             id="pay_btn"
                             type="submit"
                             className="btn btn-block py-3"
+                            disabled={loading}
                         >
-                            Pay {` - ${orderInfo && orderInfo.totalPrice}`}
+                            {loading ? (
+                                <><span className="spinner-border spinner-border-sm mr-2"></span>Processing...</>
+                            ) : `Pay - ${orderInfo && orderInfo.totalPrice}`}
                         </button>
 
                     </form>

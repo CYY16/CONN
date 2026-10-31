@@ -18,4 +18,9 @@ app.use('/api/v1', products);
 app.use('/api/v1', auth);
 app.use('/api/v1', order);
 
+app.use((err, req, res, next) => {
+    console.log(err)
+    res.status(500).json({ success: false, message: err.message || 'Server error' })
+})
+
 module.exports = app

@@ -3,19 +3,18 @@ import { useNavigate } from 'react-router-dom'
 import MetaData from '../Layout/MetaData'
 // import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { register, googleLogin, clearErrors } from '../../actions/userActions'
 
 
-const defaultAvatar = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9IiNlOWYwZmYiLz48L3N2Zz4=';
+const defaultAvatar = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNDgiIGZpbGw9IiNmZmZmZmYiIHN0cm9rZT0iI2QzZDNkMyIgc3Ryb2tlLXdpZHRoPSIyIi8+PC9zdmc+';
 
 const Register = () => {
     const dispatch = useDispatch()
     const { isAuthenticated, error, loading } = useSelector(state => state.auth);
-    const [user, setUser] = useState({
-        name: '',
-        email: '',
-        password: '',
-    })
 
     // const [user, setUser] = useState({
     //     name: '',
@@ -23,10 +22,8 @@ const Register = () => {
     //     password: '',
     // })
 
-    const { name, email, password } = user;
-
     const [avatar, setAvatar] = useState(defaultAvatar)
-    const [avatarPreview, setAvatarPreview] = useState('/images/default_avatar.jpg')
+    const [avatarPreview, setAvatarPreview] = useState(defaultAvatar)
 
     // const [error, setError] = useState('')
     // const [loading, setLoading] = useState(true)
@@ -39,45 +36,55 @@ const Register = () => {
         }
 
         if (error) {
-            console.log(error)
+            if (error !== 'Login first to access this resource') {
+                toast.error(error, { position: 'bottom-right' });
+            }
             dispatch(clearErrors());
         }
 
     }, [error, navigate, isAuthenticated, dispatch])
 
-    const submitHandler = (e) => {
-        e.preventDefault();
+    const formik = useFormik({
+        initialValues: {
+            name: '',
+            email: '',
+            password: ''
+        },
+        validationSchema: Yup.object({
+            name: Yup.string()
+                .trim()
+                .max(30, 'Name cannot exceed 30 characters')
+                .required('Name is required'),
+            email: Yup.string()
+                .email('Invalid email address')
+                .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Invalid email address')
+                .required('Email is required'),
+            password: Yup.string()
+                .min(6, 'Password must be at least 6 characters')
+                .required('Password is required')
+        }),
+        onSubmit: (values) => {
+            const formData = new FormData();
+            formData.set('name', values.name);
+            formData.set('email', values.email);
+            formData.set('password', values.password);
+            formData.set('avatar', avatar || defaultAvatar);
 
-        if (!name || !email || !password) {
-            return;
+            dispatch(register(formData))
         }
-
-        const formData = new FormData();
-        formData.set('name', name);
-        formData.set('email', email);
-        formData.set('password', password);
-        formData.set('avatar', avatar || defaultAvatar);
-
-        dispatch(register(formData))
-    }
+    })
 
     const onChange = e => {
-        if (e.target.name === 'avatar') {
+        const reader = new FileReader();
 
-            const reader = new FileReader();
-
-            reader.onload = () => {
-                if (reader.readyState === 2) {
-                    setAvatarPreview(reader.result)
-                    setAvatar(reader.result)
-                }
+        reader.onload = () => {
+            if (reader.readyState === 2) {
+                setAvatarPreview(reader.result)
+                setAvatar(reader.result)
             }
-
-            reader.readAsDataURL(e.target.files[0])
-
-        } else {
-            setUser({ ...user, [e.target.name]: e.target.value })
         }
+
+        reader.readAsDataURL(e.target.files[0])
     }
 
     // const register = async (userData) => {
@@ -114,7 +121,7 @@ const Register = () => {
 
             <div className="row wrapper">
                 <div className="col-10 col-lg-5">
-                    <form className="shadow-lg" onSubmit={submitHandler} encType='multipart/form-data'>
+                    <form className="shadow-lg" onSubmit={formik.handleSubmit} encType='multipart/form-data' noValidate>
                         <h1 className="mb-3">Register</h1>
 
                         <div className="form-group">
@@ -123,10 +130,11 @@ const Register = () => {
                                 type="name"
                                 id="name_field"
                                 className="form-control"
-                                name='name'
-                                value={name}
-                                onChange={onChange}
+                                {...formik.getFieldProps('name')}
                             />
+                            {formik.touched.name && formik.errors.name && (
+                                <small className="text-danger">{formik.errors.name}</small>
+                            )}
                         </div>
 
                         <div className="form-group">
@@ -135,10 +143,11 @@ const Register = () => {
                                 type="email"
                                 id="email_field"
                                 className="form-control"
-                                name='email'
-                                value={email}
-                                onChange={onChange}
+                                {...formik.getFieldProps('email')}
                             />
+                            {formik.touched.email && formik.errors.email && (
+                                <small className="text-danger">{formik.errors.email}</small>
+                            )}
                         </div>
 
                         <div className="form-group">
@@ -147,10 +156,11 @@ const Register = () => {
                                 type="password"
                                 id="password_field"
                                 className="form-control"
-                                name='password'
-                                value={password}
-                                onChange={onChange}
+                                {...formik.getFieldProps('password')}
                             />
+                            {formik.touched.password && formik.errors.password && (
+                                <small className="text-danger">{formik.errors.password}</small>
+                            )}
                         </div>
 
                         <div className='form-group'>
@@ -187,7 +197,9 @@ const Register = () => {
                             className="btn btn-block py-3"
                             disabled={loading}
                         >
-                            {loading ? 'REGISTERING...' : 'REGISTER'}
+                            {loading ? (
+                                <><span className="spinner-border spinner-border-sm mr-2"></span>REGISTERING...</>
+                            ) : 'REGISTER'}
                         </button>
                     </form>
                     <button type="button" className="btn btn-outline-dark btn-block py-3 mt-3" disabled={loading} onClick={() => dispatch(googleLogin())}>

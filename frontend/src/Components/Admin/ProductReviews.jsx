@@ -9,11 +9,16 @@ import Swal from 'sweetalert2'
 import { getUser, errMsg } from '../Utils/helpers'
 import axios from 'axios'
 import { DataGrid, } from '@mui/x-data-grid'
+import { useDispatch, useSelector } from 'react-redux'
+import { getAdminProducts } from '../../actions/productActions'
 
 
 
 const ProductReviews = () => {
+    const dispatch = useDispatch()
+    const { products } = useSelector(state => state.products)
     const [productId, setProductId] = useState('')
+    const [search, setSearch] = useState('')
     const [error, setError] = useState('')
     const [listReviews, setListReviews] = useState([])
     const [deleteError, setDeleteError] = useState('')
@@ -62,6 +67,10 @@ const ProductReviews = () => {
 
     }
     useEffect(() => {
+        dispatch(getAdminProducts())
+    }, [dispatch])
+
+    useEffect(() => {
         if (error) {
 
             setError('')
@@ -85,6 +94,22 @@ const ProductReviews = () => {
     const submitHandler = (e) => {
         e.preventDefault();
         getProductReviews(productId)
+    }
+
+    const searchText = search.trim().toLowerCase()
+    const filteredProducts = products.filter(product =>
+        product.name.toLowerCase().includes(searchText) || product._id.toLowerCase().includes(searchText)
+    )
+    // if the chosen product is filtered out, show the first option instead of a product that was not chosen
+    const selectedInList = filteredProducts.some(product => product._id === productId)
+
+    const searchHandler = (e) => {
+        setSearch(e.target.value)
+        const typedText = e.target.value.trim().toLowerCase()
+        const match = products.find(product => product._id.toLowerCase() === typedText)
+        if (match) {
+            setProductId(match._id)
+        }
     }
 
     const columns = [
@@ -156,14 +181,28 @@ const ProductReviews = () => {
                             <div className="col-5">
                                 <form onSubmit={submitHandler}>
                                     <div className="form-group">
-                                        <label htmlFor="productId_field">Enter Product ID</label>
+                                        <label htmlFor="product_search_field">Search product by name or ID</label>
                                         <input
                                             type="text"
+                                            id="product_search_field"
+                                            className="form-control"
+                                            value={search}
+                                            onChange={searchHandler}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label htmlFor="productId_field">Select Product</label>
+                                        <select
                                             id="productId_field"
                                             className="form-control"
-                                            value={productId}
+                                            value={selectedInList ? productId : ''}
                                             onChange={(e) => setProductId(e.target.value)}
-                                        />
+                                        >
+                                            <option value="" disabled>{filteredProducts.length === 0 ? 'No products found' : 'Select a product'}</option>
+                                            {filteredProducts.map(product => (
+                                                <option key={product._id} value={product._id}>{`${product.name} (${product._id})`}</option>
+                                            ))}
+                                        </select>
                                     </div>
                                     <button
                                         id="search_button"

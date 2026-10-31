@@ -8,6 +8,8 @@ import { updateProfile, loadUser, clearErrors } from '../../actions/userActions'
 
 import { UPDATE_PROFILE_RESET } from '../../constants/userConstants'
 import { useDispatch, useSelector } from 'react-redux'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
 
 // import { getToken } from '../Utils/helpers';
 
@@ -18,8 +20,6 @@ const UpdateProfile = () => {
     const { error, isUpdated, loading } = useSelector(state => state.user)
 
 
-    const [name, setName] = useState('')
-    const [email, setEmail] = useState('')
     const [avatar, setAvatar] = useState('')
     const [avatarPreview, setAvatarPreview] = useState('/images/default_avatar.jpg')
     // const [error, setError] = useState('')
@@ -86,17 +86,16 @@ const UpdateProfile = () => {
     useEffect(() => {
         console.log(user)
         if (user) {
-            setName(user.name);
-            setEmail(user.email);
             setAvatarPreview(user.avatar.url)
         }
         if (error) {
             // alert.error(error);
-            console.log(error)
+            toast.error(error, { position: 'bottom-right' });
             dispatch(clearErrors());
         }
         if (isUpdated) {
             // alert.success('User updated successfully')
+            toast.success('Profile updated', { position: 'bottom-right' });
             dispatch(loadUser());
             navigate('/me', { replace: true })
             dispatch({
@@ -105,14 +104,30 @@ const UpdateProfile = () => {
         }
     }, [dispatch, error, isUpdated, navigate, user])
 
-    const submitHandler = (e) => {
-        e.preventDefault();
-        const formData = new FormData();
-        formData.set('name', name);
-        formData.set('email', email);
-        formData.set('avatar', avatar);
-        dispatch(updateProfile(formData))
-    }
+    const formik = useFormik({
+        enableReinitialize: true,
+        initialValues: {
+            name: user ? user.name : '',
+            email: user ? user.email : ''
+        },
+        validationSchema: Yup.object({
+            name: Yup.string()
+                .trim()
+                .max(30, 'Name cannot exceed 30 characters')
+                .required('Name is required'),
+            email: Yup.string()
+                .email('Invalid email address')
+                .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Invalid email address')
+                .required('Email is required')
+        }),
+        onSubmit: (values) => {
+            const formData = new FormData();
+            formData.set('name', values.name);
+            formData.set('email', values.email);
+            formData.set('avatar', avatar);
+            dispatch(updateProfile(formData))
+        }
+    })
 
     const onChange = e => {
         const reader = new FileReader();
@@ -136,7 +151,7 @@ const UpdateProfile = () => {
 
             <div className="row wrapper">
                 <div className="col-10 col-lg-5">
-                    <form className="shadow-lg" onSubmit={submitHandler} encType='multipart/form-data'>
+                    <form className="shadow-lg" onSubmit={formik.handleSubmit} encType='multipart/form-data' noValidate>
                         <h1 className="mt-2 mb-5">Update Profile</h1>
 
                         <div className="form-group">
@@ -145,10 +160,11 @@ const UpdateProfile = () => {
                                 type="name"
                                 id="name_field"
                                 className="form-control"
-                                name='name'
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
+                                {...formik.getFieldProps('name')}
                             />
+                            {formik.touched.name && formik.errors.name && (
+                                <small className="text-danger">{formik.errors.name}</small>
+                            )}
                         </div>
 
                         <div className="form-group">
@@ -157,10 +173,11 @@ const UpdateProfile = () => {
                                 type="email"
                                 id="email_field"
                                 className="form-control"
-                                name='email'
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                {...formik.getFieldProps('email')}
                             />
+                            {formik.touched.email && formik.errors.email && (
+                                <small className="text-danger">{formik.errors.email}</small>
+                            )}
                         </div>
 
                         <div className='form-group'>
@@ -191,7 +208,11 @@ const UpdateProfile = () => {
                             </div>
                         </div>
 
-                        <button type="submit" className="btn update-btn btn-block mt-4 mb-3" disabled={loading ? true : false} >Update</button>
+                        <button type="submit" className="btn update-btn btn-block mt-4 mb-3" disabled={loading ? true : false} >
+                            {loading ? (
+                                <><span className="spinner-border spinner-border-sm mr-2"></span>Updating...</>
+                            ) : 'Update'}
+                        </button>
                     </form>
                 </div>
             </div>

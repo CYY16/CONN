@@ -94,7 +94,7 @@ const OrderDetails = () => {
                                         </div>
 
                                         <div className="col-5 col-lg-5">
-                                            <Link to={`/products/${item.product}`}>{item.name}</Link>
+                                            <Link to={`/product/${item.product}`}>{item.name}</Link>
                                         </div>
 
 

@@ -666,6 +666,7 @@ ul.CTAs a {
   font-size: 3rem;
   padding-left: 0.9rem;
   color: #e3e3e3;
+  cursor: pointer;
 }
 
 .star:first-child {
@@ -673,11 +674,11 @@ ul.CTAs a {
 }
 
 .orange {
-  color: #fa9c23;
+  color: var(--conn-red);
 }
 
 .yellow {
-  color: #fdcc0d;
+  color: #ff7a7a;
 }
 
 .review_user {
@@ -929,7 +930,6 @@ nav {
 .page-link,
 .page-link:hover,
 .text-warning,
-.orange,
 .card-title a:hover {
   color: var(--conn-red);
 }
@@ -937,8 +937,6 @@ nav {
 .ratings,
 .rating-outer,
 .rating-inner::before,
-.star,
-.yellow,
 .text-primary {
   color: var(--conn-red) !important;
 }
@@ -1149,5 +1147,160 @@ footer {
 
   .header-links {
     gap: 1rem;
+  }
+}
+
+/* Home listing redesign */
+.filter-card {
+  margin-bottom: 1.25rem;
+  padding: 24px;
+  border-radius: 4px;
+  background: var(--conn-white);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+}
+
+.filter-card-title {
+  margin-bottom: 1rem;
+  color: var(--conn-black);
+  font-weight: 700;
+}
+
+.filter-label {
+  margin-bottom: 0.35rem;
+  color: var(--conn-muted);
+  font-size: 0.85rem;
+}
+
+.filter-section-header {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--conn-black);
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.filter-section-header .fa {
+  width: 1rem;
+  font-size: 0.75rem;
+}
+
+.filter-section-body {
+  margin-top: 0.75rem;
+}
+
+.filter-section-body .form-check {
+  margin-bottom: 0.35rem;
+}
+
+.filter-section-body .form-check-label {
+  cursor: pointer;
+}
+
+.filter-price-values {
+  color: var(--conn-black);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* App.css forces the slider red with !important, so only this can beat it */
+.filter-card .MuiSlider-colorPrimary {
+  color: #111111 !important;
+}
+
+.listing-results {
+  margin: 1rem 0 0.5rem;
+}
+
+.listing-results-count {
+  margin: 0;
+  color: var(--conn-black);
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.listing-results-keyword {
+  margin: 0.25rem 0 0;
+  color: var(--conn-muted);
+  font-size: 0.95rem;
+}
+
+.product-card.listing-card {
+  border: 1px solid #e3e3e3;
+  border-radius: 4px;
+  background: var(--conn-white);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+  transition: none;
+}
+
+.product-card.listing-card:hover {
+  box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+  transform: none;
+}
+
+.listing-card .product-card-image {
+  height: 260px;
+  background: #f5f5f5;
+}
+
+.listing-card.product-card .card-img-top {
+  width: 100%;
+  height: 100%;
+  padding: 0.6rem;
+  object-fit: contain;
+}
+
+.listing-card.product-card .card-body {
+  min-height: 0;
+  padding: 1rem;
+}
+
+.listing-card.product-card .card-title {
+  min-height: 2.6em;
+  margin-bottom: 0.5rem;
+  font-size: 17px;
+  line-height: 1.3;
+}
+
+.listing-card.product-card .card-title a {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--conn-black);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.listing-card .ratings {
+  font-size: 0.95rem;
+}
+
+.listing-card #no_of_reviews {
+  margin-left: 0.25rem;
+  color: var(--conn-muted);
+  font-size: 0.85rem;
+}
+
+.listing-card.product-card .card-text {
+  margin: 0.5rem 0 1rem;
+  color: var(--conn-red);
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.listing-card.product-card #view_btn {
+  width: 100%;
+  margin-top: auto;
+  padding: 0.65rem 1rem;
+  border-radius: 4px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+@media (min-width: 768px) {
+  .filter-column {
+    border-right: 1px solid #e3e3e3;
   }
 }

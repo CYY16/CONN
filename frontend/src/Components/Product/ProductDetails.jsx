@@ -3,6 +3,7 @@ import { useParams, } from 'react-router-dom'
 import MetaData from '../Layout/MetaData'
 import { Carousel } from 'react-bootstrap'
 
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ListReviews from '../Review/ListReviews';
 
@@ -47,8 +48,12 @@ const ProductDetails = () => {
     }
 
     const addToCart = async () => {
-        await dispatch(addItemToCart(id, quantity));
-
+        const added = await dispatch(addItemToCart(id, quantity));
+        if (added) {
+            toast.success('Added to cart', { position: 'bottom-right' });
+        } else {
+            toast.error('Could not add to cart', { position: 'bottom-right' });
+        }
     }
 
     function setUserRatings() {

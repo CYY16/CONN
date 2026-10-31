@@ -7,7 +7,11 @@ const { initializeApp, cert, getApps } = require('firebase-admin/app');
 const { getAuth } = require('firebase-admin/auth');
 
 exports.registerUser = async (req, res, next) => {
-    console.log(req.body)
+    const existingUser = await User.findOne({ email: req.body.email })
+    if (existingUser) {
+        return res.status(400).json({ message: 'Email is already registered' })
+    }
+
     const result = await cloudinary.v2.uploader.upload(req.body.avatar, {
         folder: 'avatars',
         width: 150,
@@ -190,6 +194,10 @@ exports.getUserProfile = async (req, res, next) => {
 }
 
 exports.updateProfile = async (req, res, next) => {
+    const emailOwner = await User.findOne({ email: req.body.email, _id: { $ne: req.user.id } })
+    if (emailOwner) {
+        return res.status(400).json({ message: 'Email is already in use' })
+    }
 
     const newUserData = {
         name: req.body.name,
@@ -231,7 +239,13 @@ exports.updateProfile = async (req, res, next) => {
 }
 
 exports.updatePassword = async (req, res, next) => {
-    console.log(req.body.password)
+    if (!req.body.oldPassword || !req.body.password) {
+        return res.status(400).json({ message: 'Please enter old and new password' })
+    }
+    if (req.body.password.length < 6) {
+        return res.status(400).json({ message: 'Password must be at least 6 characters' })
+    }
+
     const user = await User.findById(req.user.id).select('+password');
     // Check previous user password
     const isMatched = await user.comparePassword(req.body.oldPassword)
@@ -249,6 +263,37 @@ exports.updatePassword = async (req, res, next) => {
     // });
     sendToken(user, 200, res)
 
+}
+
+exports.createUser = async (req, res, next) => {
+    const existingUser = await User.findOne({ email: req.body.email })
+    if (existingUser) {
+        return res.status(400).json({ message: 'Email is already registered' })
+    }
+
+    const result = await cloudinary.v2.uploader.upload(req.body.avatar, {
+        folder: 'avatars',
+        width: 150,
+        crop: "scale"
+    })
+    const { name, email, password, role } = req.body;
+    await User.create({
+        name,
+        email,
+        password,
+        role,
+        avatar: {
+            public_id: result.public_id,
+            url: result.secure_url
+        },
+    })
+    // find again like googleLogin, so the hashed password is not sent back
+    const user = await User.findOne({ email })
+
+    return res.status(201).json({
+        success: true,
+        user
+    })
 }
 
 exports.allUsers = async (req, res, next) => {

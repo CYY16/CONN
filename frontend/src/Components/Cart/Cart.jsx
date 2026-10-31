@@ -3,12 +3,15 @@ import { Link } from 'react-router-dom'
 import MetaData from '../Layout/MetaData'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { addItemToCart, removeItemFromCart } from '../../actions/cartActions'
 
 
 const Cart = () => {
     const dispatch = useDispatch();
     const { cartItems } = useSelector(state => state.cart)
+    const { isAuthenticated } = useSelector(state => state.auth)
 
     const navigate = useNavigate()
 
@@ -29,7 +32,12 @@ const Cart = () => {
         dispatch(removeItemFromCart(id))
     }
     const checkoutHandler = () => {
-        navigate('/login?redirect=shipping')
+        if (isAuthenticated) {
+            navigate('/shipping')
+        } else {
+            toast.info('Please log in to check out', { position: 'bottom-right' })
+            navigate('/login?redirect=shipping')
+        }
     }
     // localStorage.setItem('cartItems', JSON.stringify(cartItems))
     // useEffect(() => {
@@ -56,7 +64,7 @@ const Cart = () => {
                                             </div>
 
                                             <div className="col-5 col-lg-3">
-                                                <Link to={`/products/${item.product}`}>{item.name}</Link>
+                                                <Link to={`/product/${item.product}`}>{item.name}</Link>
                                             </div>
 
 

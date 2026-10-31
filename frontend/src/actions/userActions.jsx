@@ -37,6 +37,9 @@ import {
     DELETE_USER_REQUEST,
     DELETE_USER_SUCCESS,
     DELETE_USER_FAIL,
+    NEW_USER_REQUEST,
+    NEW_USER_SUCCESS,
+    NEW_USER_FAIL,
     CLEAR_ERRORS
 } from '../constants/userConstants'
 
@@ -246,6 +249,28 @@ export const allUsers = () => async (dispatch) => {
     } catch (error) {
         dispatch({
             type: ALL_USERS_FAIL,
+            payload: error.response.data.message
+        })
+    }
+}
+
+export const createUser = (userData) => async (dispatch) => {
+    try {
+        dispatch({ type: NEW_USER_REQUEST })
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            withCredentials: true
+        }
+        const { data } = await axios.post(`${import.meta.env.VITE_API}/admin/user/new`, userData, config)
+        dispatch({
+            type: NEW_USER_SUCCESS,
+            payload: data
+        })
+    } catch (error) {
+        dispatch({
+            type: NEW_USER_FAIL,
             payload: error.response.data.message
         })
     }

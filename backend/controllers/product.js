@@ -5,6 +5,13 @@ const APIFeatures = require('../utils/apiFeatures');
 const Filter = require('bad-words');
 
 exports.newProduct = async (req, res, next) => {
+    if (!req.body.images) {
+        return res.status(400).json({
+            success: false,
+            message: 'Please upload at least one image'
+        })
+    }
+
     console.log(req.files)
     let images = []
     // if (typeof req.files === 'string') {

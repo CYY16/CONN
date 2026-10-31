@@ -8,6 +8,8 @@ import 'react-toastify/dist/ReactToastify.css'
 // import axios from 'axios';
 // import { getToken } from '../Utils/helpers';
 import { useDispatch, useSelector } from 'react-redux'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
 import { updateProduct, getProductDetails, clearErrors } from '../../actions/productActions'
 import { UPDATE_PRODUCT_RESET } from '../../constants/productConstants'
 import { motorcycleBrands, motorcycleCategories } from '../../constants/productOptions'
@@ -17,12 +19,6 @@ const UpdateProduct = () => {
     const dispatch = useDispatch()
     const { error, product } = useSelector(state => state.productDetails);
     const { loading, error: updateError, isUpdated } = useSelector(state => state.product);
-    const [name, setName] = useState('');
-    const [price, setPrice] = useState(0);
-    const [description, setDescription] = useState('');
-    const [category, setCategory] = useState('');
-    const [stock, setStock] = useState(0);
-    const [seller, setSeller] = useState('');
     const [images, setImages] = useState([]);
     const [oldImages, setOldImages] = useState([]);
     const [imagesPreview, setImagesPreview] = useState([])
@@ -98,20 +94,53 @@ const UpdateProduct = () => {
     //     }
     // }, [error, isUpdated, updateError, product, id])
 
-    const submitHandler = (e) => {
-        e.preventDefault();
-        const formData = new FormData();
-        formData.set('name', name);
-        formData.set('price', price);
-        formData.set('description', description);
-        formData.set('category', category);
-        formData.set('stock', stock);
-        formData.set('seller', seller);
-        images.forEach(image => {
-            formData.append('images', image)
-        })
-        dispatch(updateProduct(product._id, formData))
-    }
+    const formik = useFormik({
+        enableReinitialize: true,
+        initialValues: {
+            name: product.name || '',
+            price: product.price || 0,
+            description: product.description || '',
+            category: product.category || '',
+            stock: product.stock || 0,
+            seller: product.seller || ''
+        },
+        validationSchema: Yup.object({
+            name: Yup.string()
+                .trim()
+                .max(100, 'Name cannot exceed 100 characters')
+                .required('Name is required'),
+            price: Yup.number()
+                .typeError('Price must be a number')
+                .moreThan(0, 'Price must be greater than 0')
+                .required('Price is required'),
+            description: Yup.string()
+                .trim()
+                .required('Description is required'),
+            category: Yup.string()
+                .required('Category is required'),
+            stock: Yup.number()
+                .typeError('Stock must be a number')
+                .integer('Stock must be a whole number')
+                .min(0, 'Stock cannot be negative')
+                .required('Stock is required'),
+            seller: Yup.string()
+                .required('Brand is required')
+        }),
+        onSubmit: (values) => {
+            const formData = new FormData();
+            formData.set('name', values.name);
+            formData.set('price', values.price);
+            formData.set('description', values.description);
+            formData.set('category', values.category);
+            formData.set('stock', values.stock);
+            formData.set('seller', values.seller);
+            images.forEach(image => {
+                formData.append('images', image)
+            })
+            dispatch(updateProduct(product._id, formData))
+        }
+    })
+
     const onChange = e => {
         const files = Array.from(e.target.files)
         setImagesPreview([]);
@@ -133,12 +162,6 @@ const UpdateProduct = () => {
         if (product && product._id !== id) {
             dispatch(getProductDetails(id))
         } else {
-            setName(product.name);
-            setPrice(product.price);
-            setDescription(product.description);
-            setCategory(product.category);
-            setSeller(product.seller);
-            setStock(product.stock)
             setOldImages(product.images)
         }
         if (error) {
@@ -168,7 +191,7 @@ const UpdateProduct = () => {
                 <div className="col-12 col-md-10">
                     <>
                         <div className="wrapper my-5">
-                            <form className="shadow-lg" onSubmit={submitHandler} encType='multipart/form-data'>
+                            <form className="shadow-lg" onSubmit={formik.handleSubmit} encType='multipart/form-data' noValidate>
                                 <h1 className="mb-4">Update Product</h1>
                                 <div className="form-group">
                                     <label htmlFor="name_field">Name</label>
@@ -176,9 +199,11 @@ const UpdateProduct = () => {
                                         type="text"
                                         id="name_field"
                                         className="form-control"
-                                        value={name}
-                                        onChange={(e) => setName(e.target.value)}
+                                        {...formik.getFieldProps('name')}
                                     />
+                                    {formik.touched.name && formik.errors.name && (
+                                        <small className="text-danger">{formik.errors.name}</small>
+                                    )}
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="price_field">Price</label>
@@ -186,24 +211,32 @@ const UpdateProduct = () => {
                                         type="text"
                                         id="price_field"
                                         className="form-control"
-                                        value={price}
-                                        onChange={(e) => setPrice(e.target.value)}
+                                        {...formik.getFieldProps('price')}
                                     />
+                                    {formik.touched.price && formik.errors.price && (
+                                        <small className="text-danger">{formik.errors.price}</small>
+                                    )}
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="description_field">Description</label>
-                                    <textarea className="form-control" id="description_field" rows="8" value={description} onChange={(e) => setDescription(e.target.value)}></textarea>
+                                    <textarea className="form-control" id="description_field" rows="8" {...formik.getFieldProps('description')}></textarea>
+                                    {formik.touched.description && formik.errors.description && (
+                                        <small className="text-danger">{formik.errors.description}</small>
+                                    )}
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="category_field">Category</label>
-                                    <select className="form-control" id="category_field" value={category} onChange={(e) => setCategory(e.target.value)} required>
-                                        {category && !motorcycleCategories.includes(category) && (
-                                            <option key={category} value={category}>{category} (legacy category)</option>
+                                    <select className="form-control" id="category_field" {...formik.getFieldProps('category')} required>
+                                        {formik.values.category && !motorcycleCategories.includes(formik.values.category) && (
+                                            <option key={formik.values.category} value={formik.values.category}>{formik.values.category} (legacy category)</option>
                                         )}
                                         {motorcycleCategories.map(category => (
                                             <option key={category} value={category} >{category}</option>
                                         ))}
                                     </select>
+                                    {formik.touched.category && formik.errors.category && (
+                                        <small className="text-danger">{formik.errors.category}</small>
+                                    )}
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="stock_field">Stock</label>
@@ -211,27 +244,31 @@ const UpdateProduct = () => {
                                         type="number"
                                         id="stock_field"
                                         className="form-control"
-                                        value={stock}
-                                        onChange={(e) => setStock(e.target.value)}
+                                        {...formik.getFieldProps('stock')}
                                     />
+                                    {formik.touched.stock && formik.errors.stock && (
+                                        <small className="text-danger">{formik.errors.stock}</small>
+                                    )}
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="seller_field">Brand Name</label>
                                     <select
                                         id="seller_field"
                                         className="form-control"
-                                        value={seller}
-                                        onChange={(e) => setSeller(e.target.value)}
+                                        {...formik.getFieldProps('seller')}
                                         required
                                     >
-                                        {seller && !motorcycleBrands.includes(seller) && (
-                                            <option key={seller} value={seller}>{seller} (existing brand)</option>
+                                        {formik.values.seller && !motorcycleBrands.includes(formik.values.seller) && (
+                                            <option key={formik.values.seller} value={formik.values.seller}>{formik.values.seller} (existing brand)</option>
                                         )}
                                         <option value="" disabled>Select a brand</option>
                                         {motorcycleBrands.map(brand => (
                                             <option key={brand} value={brand}>{brand}</option>
                                         ))}
                                     </select>
+                                    {formik.touched.seller && formik.errors.seller && (
+                                        <small className="text-danger">{formik.errors.seller}</small>
+                                    )}
                                 </div>
                                 <div className='form-group'>
                                     <label>Images</label>
@@ -261,7 +298,9 @@ const UpdateProduct = () => {
                                     className="btn btn-block py-3"
                                     disabled={loading ? true : false}
                                 >
-                                    UPDATE
+                                    {loading ? (
+                                        <><span className="spinner-border spinner-border-sm mr-2"></span>Updating...</>
+                                    ) : 'UPDATE'}
                                 </button>
                             </form>
                         </div>

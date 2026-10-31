@@ -1,14 +1,24 @@
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import MetaData from '../Layout/MetaData'
 import CheckoutSteps from './CheckoutSteps'
 // import { getUser } from '../Utils/helpers'
 import { useSelector } from 'react-redux'
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const ConfirmOrder = () => {
     // const [user, setUser] = useState(getUser() ? getUser() : {})
     let navigate = useNavigate();
     const { cartItems, shippingInfo } = useSelector(state => state.cart)
     const { user } = useSelector(state => state.auth)
+
+    useEffect(() => {
+        if (cartItems.length === 0) {
+            toast.info('Your cart is empty', { position: 'bottom-right' })
+            navigate('/cart')
+        }
+    }, [cartItems, navigate])
+
     // Calculate Order Prices
     const itemsPrice = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
     const shippingPrice = itemsPrice > 200 ? 0 : 25

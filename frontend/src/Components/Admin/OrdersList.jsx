@@ -139,7 +139,14 @@ const OrdersList = ({ history = false }) => {
             )
         }
     ];
-    const rows = orders.map(order => ({
+    const filteredOrders = orders.filter(order => {
+        if (history) {
+            return order.orderStatus === 'Delivered'
+        }
+        return order.orderStatus !== 'Delivered'
+    })
+
+    const rows = filteredOrders.map(order => ({
         id: order._id,
         numofItems: order.orderItems.length,
         amount: `$${order.totalPrice}`,

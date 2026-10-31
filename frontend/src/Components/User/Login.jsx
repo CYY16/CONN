@@ -3,6 +3,8 @@ import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Loader from '../Layout/Loader'
 import { login, googleLogin, clearErrors } from '../../actions/userActions'
 
@@ -20,6 +22,7 @@ const Login = () => {
         validationSchema: Yup.object({
             email: Yup.string()
                 .email('Invalid email address')
+                .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Invalid email address')
                 .required('Email is required'),
             password: Yup.string()
                 .required('Password is required')
@@ -39,6 +42,9 @@ const Login = () => {
         }
 
         if (error) {
+            if (error !== 'Login first to access this resource') {
+                toast.error(error, { position: 'bottom-right' });
+            }
             dispatch(clearErrors());
         }
     }, [error, isAuthenticated, dispatch, navigate, redirect])

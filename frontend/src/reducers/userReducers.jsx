@@ -38,6 +38,10 @@ import {
     DELETE_USER_SUCCESS,
     DELETE_USER_RESET,
     DELETE_USER_FAIL,
+    NEW_USER_REQUEST,
+    NEW_USER_SUCCESS,
+    NEW_USER_RESET,
+    NEW_USER_FAIL,
     CLEAR_ERRORS
 } from '../constants/userConstants'
 
@@ -214,6 +218,41 @@ export const userDetailsReducer = (state = { user: {} }, action) => {
             }
         default:
             return state;
+    }
+}
+
+export const newUserReducer = (state = { user: {} }, action) => {
+    switch (action.type) {
+        case NEW_USER_REQUEST:
+            return {
+                ...state,
+                loading: true
+            }
+        case NEW_USER_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                success: action.payload.success,
+                user: action.payload.user
+            }
+        case NEW_USER_FAIL:
+            return {
+                ...state,
+                loading: false,
+                error: action.payload
+            }
+        case NEW_USER_RESET:
+            return {
+                ...state,
+                success: false
+            }
+        case CLEAR_ERRORS:
+            return {
+                ...state,
+                error: null
+            }
+        default:
+            return state
     }
 }
 

@@ -30,7 +30,6 @@ export const Header = () => {
                 </Link>
                 <div className="header-links">
                     <Link to="/" className="header-link">Home</Link>
-                    <Link to="/#products" className="header-link">Shop</Link>
                     {user && (
                         <div className="dropdown header-orders-dropdown">
                             <button

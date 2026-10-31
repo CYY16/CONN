@@ -4,10 +4,9 @@ import { Link } from 'react-router-dom';
 const Product = ({ product }) => {
     return (
         // <ProductDetails item={item} />
-        <div className="col-sm-12 col-md-6 col-lg-3 my-3">
-            <div className="card product-card rounded">
+        <div className="col-12 col-sm-6 col-lg-4 my-3">
+            <div className="card product-card listing-card rounded">
                 <div className="product-card-image">
-                    <span className="product-sale-badge">FOR SALE</span>
                     <img
                         className="card-img-top mx-auto"
                         src={product.images[0] ? product.images[0].url : null}
@@ -25,8 +24,8 @@ const Product = ({ product }) => {
                         </div>
                         <span id="no_of_reviews">({product.numOfReviews} reviews)</span>
                     </div>
-                    <p className="card-text">${product.price}</p>
-                    <Link to={`/product/${product._id}`} id="view_btn" className="btn btn-block">View Details</Link>
+                    <p className="card-text">₱{Number(product.price).toLocaleString()}</p>
+                    <Link to={`/product/${product._id}`} id="view_btn" className="btn btn-block">VIEW DETAILS</Link>
                 </div>
             </div>
         </div>

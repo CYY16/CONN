@@ -16,6 +16,7 @@ import {
     forgotPasswordReducer,
     allUsersReducer,
     userDetailsReducer,
+    newUserReducer,
 } from './reducers/userReducers'
 
 import { cartReducer } from './reducers/cartReducers';
@@ -61,6 +62,7 @@ const reducer = combineReducers({
     order: orderReducer,
     allUsers: allUsersReducer,
     userDetails: userDetailsReducer,
+    newUser: newUserReducer,
 
 
 })
