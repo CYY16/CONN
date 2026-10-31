@@ -69,7 +69,7 @@ const Cart = () => {
 
 
                                             <div className="col-4 col-lg-2 mt-4 mt-lg-0">
-                                                <p id="card_item_price">${item.price}</p>
+                                                <p id="card_item_price">₱{Number(item.price).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                                             </div>
 
                                             <div className="col-4 col-lg-3 mt-4 mt-lg-0">
@@ -100,7 +100,7 @@ const Cart = () => {
                                 <h4>Order Summary</h4>
                                 <hr />
                                 <p>Subtotal:  <span className="order-summary-values">{cartItems.reduce((acc, item) => (acc + Number(item.quantity)), 0)} (Units)</span></p>
-                                <p>Est. total: <span className="order-summary-values">${cartItems.reduce((acc, item) => acc + item.quantity * item.price, 0).toFixed(2)}</span></p>
+                                <p>Est. total: <span className="order-summary-values">₱{Number(cartItems.reduce((acc, item) => acc + item.quantity * item.price, 0)).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></p>
 
 
                                 <hr />

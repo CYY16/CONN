@@ -1,14 +1,4 @@
-export const motorcycleCategories = [
-    'Scooter',
-    'Standard / Naked',
-    'Sport',
-    'Cruiser',
-    'Touring',
-    'Adventure',
-    'Dual-Sport',
-    'Dirt Bike',
-    'Moped'
-]
+export const motorcycleCategories = ['Automatic', 'Manual', 'Semi Manual']
 
 export const motorcycleBrands = [
     'Honda',

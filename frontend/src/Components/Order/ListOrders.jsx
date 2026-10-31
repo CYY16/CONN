@@ -112,7 +112,7 @@ const ListOrders = ({ filter = 'all' }) => {
     const rows = filteredOrders.map(order => ({
         id: order._id,
         numOfItems: order.orderItems.length,
-        amount: `$${order.totalPrice}`,
+        amount: `₱${Number(order.totalPrice).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
         status: order.orderStatus || ''
     }));
     useEffect(() => {

@@ -181,7 +181,7 @@ const ProductsList = () => {
     const rows = products.map(product => ({
         id: product._id,
         name: product.name,
-        price: `$${product.price}`,
+        price: `₱${Number(product.price).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
         stock: product.stock,
     }));
 

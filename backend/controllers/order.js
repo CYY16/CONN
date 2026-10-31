@@ -118,8 +118,8 @@ exports.updateOrder = async (req, res, next) => {
         rows += `<tr>
             <td>${item.name}</td>
             <td>${item.quantity}</td>
-            <td>$${item.price.toFixed(2)}</td>
-            <td>$${(item.price * item.quantity).toFixed(2)}</td>
+            <td>&#8369;${Number(item.price).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+            <td>&#8369;${Number(item.price * item.quantity).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
         </tr>`
     })
 
@@ -134,10 +134,10 @@ exports.updateOrder = async (req, res, next) => {
             </tr>
             ${rows}
         </table>
-        <p>Items: $${order.itemsPrice.toFixed(2)}</p>
-        <p>Shipping: $${order.shippingPrice.toFixed(2)}</p>
-        <p>Tax: $${order.taxPrice.toFixed(2)}</p>
-        <p><b>Grand Total: $${order.totalPrice.toFixed(2)}</b></p>
+        <p>Items: &#8369;${Number(order.itemsPrice).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+        <p>Shipping: &#8369;${Number(order.shippingPrice).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+        <p>Tax: &#8369;${Number(order.taxPrice).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+        <p><b>Grand Total: &#8369;${Number(order.totalPrice).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</b></p>
         <p>Your receipt is attached as a PDF.</p>`
 
     const doc = new PDFDocument()
@@ -147,13 +147,13 @@ exports.updateOrder = async (req, res, next) => {
     doc.text(`Status: ${order.orderStatus}`)
     doc.moveDown()
     order.orderItems.forEach(item => {
-        doc.text(`${item.name} - ${item.quantity} x $${item.price.toFixed(2)} = $${(item.price * item.quantity).toFixed(2)}`)
+        doc.text(`${item.name} - ${item.quantity} x PHP ${Number(item.price).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} = PHP ${Number(item.price * item.quantity).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`)
     })
     doc.moveDown()
-    doc.text(`Items: $${order.itemsPrice.toFixed(2)}`)
-    doc.text(`Shipping: $${order.shippingPrice.toFixed(2)}`)
-    doc.text(`Tax: $${order.taxPrice.toFixed(2)}`)
-    doc.text(`Grand Total: $${order.totalPrice.toFixed(2)}`)
+    doc.text(`Items: PHP ${Number(order.itemsPrice).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`)
+    doc.text(`Shipping: PHP ${Number(order.shippingPrice).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`)
+    doc.text(`Tax: PHP ${Number(order.taxPrice).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`)
+    doc.text(`Grand Total: PHP ${Number(order.totalPrice).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`)
     doc.end()
 
     try {

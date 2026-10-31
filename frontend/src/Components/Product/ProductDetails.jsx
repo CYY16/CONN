@@ -154,7 +154,7 @@ const ProductDetails = () => {
 
                     <hr />
 
-                    <p id="product_price">${product.price}</p>
+                    <p id="product_price">₱{Number(product.price || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                     <div className="stockCounter d-inline">
                         {/* <span className="btn btn-danger minus" >-</span>
 

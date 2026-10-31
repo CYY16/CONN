@@ -38,29 +38,7 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please select category for this product'],
         enum: {
-            values: [
-                'Scooter',
-                'Standard / Naked',
-                'Sport',
-                'Cruiser',
-                'Touring',
-                'Adventure',
-                'Dual-Sport',
-                'Dirt Bike',
-                'Moped',
-                'Electronics',
-                'Cameras',
-                'Laptops',
-                'Accessories',
-                'Headphones',
-                'Food',
-                "Books",
-                'Clothes/Shoes',
-                'Beauty/Health',
-                'Sports',
-                'Outdoor',
-                'Home'
-            ],
+            values: ['Automatic', 'Manual', 'Semi Manual'],
             message: 'Please select correct category for product'
         }
     },

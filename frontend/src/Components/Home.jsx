@@ -90,7 +90,7 @@ const Home = () => {
     }
 
     function valuetext(price) {
-        return `P${price.toString()}`;
+        return `₱${price.toString()}`;
     }
 
     function priceLabel(value) {
@@ -152,14 +152,14 @@ const Home = () => {
                         <div className="col-12 col-md-3 filter-column">
                             <div className="filter-card">
                                 <h5 className="filter-card-title">Filter</h5>
-                                <label htmlFor="category_filter" className="filter-label">Category</label>
+                                <label htmlFor="category_filter" className="filter-label">Transmission</label>
                                 <select
                                     id="category_filter"
                                     className="form-control"
                                     value={category}
                                     onChange={(e) => categoryHandler(e.target.value)}
                                 >
-                                    <option value="">Any category</option>
+                                    <option value="">Any transmission</option>
                                     {motorcycleCategories.map(item => (
                                         <option key={item} value={item}>{item}</option>
                                     ))}

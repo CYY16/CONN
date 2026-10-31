@@ -338,6 +338,11 @@ exports.getUserDetails = async (req, res, next) => {
 }
 
 exports.updateUser = async (req, res, next) => {
+    const emailOwner = await User.findOne({ email: req.body.email, _id: { $ne: req.params.id } })
+    if (emailOwner) {
+        return res.status(400).json({ message: 'Email is already in use' })
+    }
+
     const newUserData = {
         name: req.body.name,
         email: req.body.email,
@@ -349,6 +354,17 @@ exports.updateUser = async (req, res, next) => {
         runValidators: true,
         // useFindAndModify: false
     })
+
+    if (req.body.password) {
+        if (req.body.password.length < 6) {
+            return res.status(400).json({ message: 'Password must be at least 6 characters' })
+        }
+
+        // findByIdAndUpdate skips the pre('save') hook, so save() is needed to hash the password
+        const passwordUser = await User.findById(req.params.id).select('+password');
+        passwordUser.password = req.body.password;
+        await passwordUser.save();
+    }
 
     return res.status(200).json({
         success: true
