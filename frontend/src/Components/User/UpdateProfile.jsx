@@ -168,12 +168,13 @@ const UpdateProfile = () => {
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="email_field">Email</label>
+                            <label htmlFor="email_field">Email{user && user.isGoogle && ' (Google account, cannot be changed)'}</label>
                             <input
                                 type="email"
                                 id="email_field"
                                 className="form-control"
                                 {...formik.getFieldProps('email')}
+                                disabled={user && user.isGoogle}
                             />
                             {formik.touched.email && formik.errors.email && (
                                 <small className="text-danger">{formik.errors.email}</small>

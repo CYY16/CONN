@@ -55,8 +55,10 @@ const Login = () => {
                 <>
                     <div className="row wrapper">
                         <div className="col-10 col-lg-5">
-                            <form className="shadow-lg" onSubmit={formik.handleSubmit} noValidate>
-                                <h1 className="mb-3">Login</h1>
+                            <form className="shadow-lg auth-card" onSubmit={formik.handleSubmit} noValidate>
+                                <div className="auth-icon"><i className="fa fa-motorcycle" aria-hidden="true"></i></div>
+                                <h1>Welcome back</h1>
+                                <p className="auth-subtitle">Log in to your CONN Moto account</p>
                                 <div className="form-group">
                                     <label htmlFor="email_field">Email</label>
                                     <input

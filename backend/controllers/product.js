@@ -214,6 +214,11 @@ exports.getAdminProducts = async (req, res, next) => {
 exports.createProductReview = async (req, res, next) => {
     const { rating, productId } = req.body;
     let comment = req.body.comment;
+    if (!(Number(rating) >= 1 && Number(rating) <= 5)) {
+        return res.status(400).json({
+            message: 'Please select a rating from 1 to 5 stars'
+        })
+    }
     const filter = new Filter();
     // bad-words v3 clean() throws on strings with no word characters (e.g. '' or '!!!')
     if (comment && /\w/.test(comment)) {
@@ -225,10 +230,10 @@ exports.createProductReview = async (req, res, next) => {
         rating: Number(rating),
         comment
     }
-    const order = await Order.findOne({ user: req.user._id, 'orderItems.product': productId })
+    const order = await Order.findOne({ user: req.user._id, 'orderItems.product': productId, orderStatus: 'Delivered' })
     if (!order) {
         return res.status(400).json({
-            message: 'Only customers who ordered this product can review it'
+            message: 'Only customers whose order of this product was delivered can review it'
         })
     }
     const product = await Product.findById(productId);

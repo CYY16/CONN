@@ -1542,3 +1542,152 @@ footer {
     border-right: 1px solid #e3e3e3;
   }
 }
+
+/* Design refresh */
+
+/* Home hero */
+.home-hero {
+  padding: 2.75rem clamp(1rem, 4vw, 3.5rem);
+  background: linear-gradient(120deg, #111111 0%, #2a2a2a 65%, #5a0a05 100%);
+  color: var(--conn-white);
+}
+
+.home-hero h1 {
+  margin: 0 0 0.4rem;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.home-hero h1 span {
+  color: var(--conn-red);
+}
+
+.home-hero p {
+  max-width: 36rem;
+  margin: 0;
+  color: #cfcfcf;
+  font-size: 1.05rem;
+}
+
+/* Home filters */
+.filter-card {
+  border-radius: 12px;
+  border-top: 4px solid var(--conn-red);
+}
+
+.filter-card-title {
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Home results bar */
+.listing-results {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 1rem 0 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #eeeeee;
+}
+
+.listing-results-count {
+  font-size: 1.4rem;
+}
+
+/* Home product cards */
+.product-card.listing-card {
+  overflow: hidden;
+  border: 0;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 10%);
+  transition: box-shadow 160ms ease, transform 160ms ease;
+}
+
+.product-card.listing-card:hover {
+  box-shadow: 0 10px 24px rgb(0 0 0 / 16%);
+  transform: translateY(-4px);
+}
+
+.listing-card .product-card-image {
+  background: linear-gradient(180deg, #f1f1f1 0%, #ffffff 100%);
+}
+
+.product-meta {
+  margin: 0 0 0.5rem;
+  color: var(--conn-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.listing-card.product-card #view_btn {
+  border-radius: 50rem;
+}
+
+/* Login and Register card */
+.wrapper form.auth-card {
+  padding: 2rem 2.25rem 2.25rem;
+  border: 0;
+  border-top: 6px solid var(--conn-red);
+  border-radius: 16px;
+  background: var(--conn-white);
+  box-shadow: 0 14px 34px rgb(0 0 0 / 14%) !important;
+}
+
+.auth-icon {
+  display: grid;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin: 0 auto 0.8rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--conn-red);
+  color: var(--conn-white);
+  font-size: 1.5rem;
+}
+
+.auth-card h1 {
+  margin-bottom: 0.2rem;
+  font-size: 1.75rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.auth-subtitle {
+  margin-bottom: 1.5rem;
+  color: var(--conn-muted);
+  font-size: 0.9rem;
+  font-weight: 400;
+  text-align: center;
+}
+
+.auth-card label {
+  color: var(--conn-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.auth-card .form-control {
+  height: 3rem;
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+  background: #f7f7f7;
+}
+
+.auth-card .form-control:focus {
+  border-color: var(--conn-red);
+  background: var(--conn-white);
+  box-shadow: 0 0 0 0.2rem rgb(237 16 0 / 15%);
+}
+
+.wrapper form.auth-card .btn {
+  margin-top: 1.5rem;
+  border-radius: 10px;
+}
+
+.wrapper .btn-outline-dark {
+  border-radius: 10px;
+}

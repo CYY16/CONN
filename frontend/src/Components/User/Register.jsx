@@ -121,8 +121,10 @@ const Register = () => {
 
             <div className="row wrapper">
                 <div className="col-10 col-lg-5">
-                    <form className="shadow-lg" onSubmit={formik.handleSubmit} encType='multipart/form-data' noValidate>
-                        <h1 className="mb-3">Register</h1>
+                    <form className="shadow-lg auth-card" onSubmit={formik.handleSubmit} encType='multipart/form-data' noValidate>
+                        <div className="auth-icon"><i className="fa fa-motorcycle" aria-hidden="true"></i></div>
+                        <h1>Create account</h1>
+                        <p className="auth-subtitle">Join CONN Moto and start riding</p>
 
                         <div className="form-group">
                             <label htmlFor="email_field">Name</label>

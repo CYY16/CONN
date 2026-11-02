@@ -138,6 +138,12 @@ const Home = () => {
     return (
         <>
             <MetaData title={keyword ? 'Search Results' : 'For Sale Units'} />
+            {!keyword && (
+                <section className="home-hero">
+                    <h1>Find your next <span>ride</span></h1>
+                    <p>Browse motorcycles from top brands. Filter by transmission, price and rating.</p>
+                </section>
+            )}
             <div className="container container-fluid">
                 <section id="products" className="mt-5">
                     {/* <div className="row">
@@ -272,7 +278,7 @@ const Home = () => {
 
                         <div className="col-12 col-md-9">
                             <div className="listing-results">
-                                <h2 className="listing-results-count">{filteredProductsCount || 0} results</h2>
+                                <h2 className="listing-results-count">{filteredProductsCount || 0} units found</h2>
                                 {keyword && <p className="listing-results-keyword">Results for "{keyword}"</p>}
                             </div>
                             {loading && currentPage === 1 ? <Loader /> : (

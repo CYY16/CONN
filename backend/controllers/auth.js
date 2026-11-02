@@ -96,6 +96,8 @@ exports.googleLogin = async (req, res, next) => {
         return res.status(401).json({ message: 'Google login failed' })
     }
     const { email, name, picture } = decodedToken;
+    // mark an existing account as a Google account (does nothing if the email is new)
+    await User.updateOne({ email }, { isGoogle: true })
 
     let user = await User.findOne({ email })
     if (!user) {
@@ -103,6 +105,7 @@ exports.googleLogin = async (req, res, next) => {
             name,
             email,
             password: crypto.randomBytes(20).toString('hex'),
+            isGoogle: true,
             avatar: {
                 public_id: 'google',
                 url: picture
@@ -194,6 +197,11 @@ exports.getUserProfile = async (req, res, next) => {
 }
 
 exports.updateProfile = async (req, res, next) => {
+    const currentUser = await User.findById(req.user.id)
+    if (currentUser.isGoogle && req.body.email !== currentUser.email) {
+        return res.status(400).json({ message: 'The email of a Google account cannot be changed' })
+    }
+
     const emailOwner = await User.findOne({ email: req.body.email, _id: { $ne: req.user.id } })
     if (emailOwner) {
         return res.status(400).json({ message: 'Email is already in use' })

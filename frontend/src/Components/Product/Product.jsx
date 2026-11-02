@@ -18,6 +18,7 @@ const Product = ({ product }) => {
                         {/* <a href="{`/product/${product._id}`}">{product.name}</a> */}
                         <Link to={`/product/${product._id}`} >{product.name}</Link>
                     </h5>
+                    <p className="product-meta">{product.seller} · {product.category}</p>
                     <div className="ratings mt-auto">
                         <div className="rating-outer">
                             <div className="rating-inner" style={{ width: `${(product.ratings / 5) * 100}%` }}></div>
