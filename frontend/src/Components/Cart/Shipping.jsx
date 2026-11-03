@@ -58,10 +58,11 @@ const Shipping = () => {
             <div className="row wrapper">
                 <div className="col-10 col-lg-5">
                     <form
-                        className="shadow-lg"
+                        className="shadow-lg auth-card"
                         onSubmit={formik.handleSubmit}
                         noValidate
                     >
+                        <img src="/images/CONN.png" alt="CONN" className="auth-logo" />
                         <h1 className="mb-4">Shipping Info</h1>
                         <div className="form-group">
                             <label htmlFor="address_field">Address</label>

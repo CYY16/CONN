@@ -1,4 +1,4 @@
-﻿import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useFormik } from 'formik'
@@ -9,6 +9,7 @@ import Loader from '../Layout/Loader'
 import { login, googleLogin, clearErrors } from '../../actions/userActions'
 
 const Login = () => {
+    const [showPassword, setShowPassword] = useState(false)
     const { isAuthenticated, error, loading } = useSelector(state => state.auth)
     const navigate = useNavigate()
     const location = useLocation()
@@ -56,7 +57,7 @@ const Login = () => {
                     <div className="row wrapper">
                         <div className="col-10 col-lg-5">
                             <form className="shadow-lg auth-card" onSubmit={formik.handleSubmit} noValidate>
-                                <div className="auth-icon"><i className="fa fa-motorcycle" aria-hidden="true"></i></div>
+                                <img src="/images/CONN.png" alt="CONN" className="auth-logo" />
                                 <h1>Welcome back</h1>
                                 <p className="auth-subtitle">Log in to your CONN Moto account</p>
                                 <div className="form-group">
@@ -74,14 +75,17 @@ const Login = () => {
 
                                 <div className="form-group">
                                     <label htmlFor="password_field">Password</label>
-                                    <input
-                                        type="password"
-                                        id="password_field"
-                                        className={`form-control ${formik.touched.password && formik.errors.password ? 'is-invalid' : ''}`}
-                                        {...formik.getFieldProps('password')}
-                                    />
+                                    <div className="password-wrapper">
+                                        <input
+                                            type={showPassword ? 'text' : 'password'}
+                                            id="password_field"
+                                            className={`form-control ${formik.touched.password && formik.errors.password ? 'is-invalid' : ''}`}
+                                            {...formik.getFieldProps('password')}
+                                        />
+                                        <button type="button" className="btn btn-outline-secondary" aria-label={showPassword ? 'Hide password' : 'Show password'} onClick={() => setShowPassword(!showPassword)}><i className={showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'}></i></button>
+                                    </div>
                                     {formik.touched.password && formik.errors.password && (
-                                        <div className="invalid-feedback">{formik.errors.password}</div>
+                                        <div className="invalid-feedback d-block">{formik.errors.password}</div>
                                     )}
                                 </div>
 

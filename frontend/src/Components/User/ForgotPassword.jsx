@@ -56,8 +56,9 @@ const ForgotPassword = () => {
             <MetaData title={'Forgot Password'} />
             <div className="row wrapper">
                 <div className="col-10 col-lg-5">
-                    <form className="shadow-lg" onSubmit={submitHandler}>
-                        <h1 className="mb-3">Forgot Password</h1>
+                    <form className="shadow-lg auth-card" onSubmit={submitHandler}>
+                        <img src="/images/CONN.png" alt="CONN" className="auth-logo" />
+                        <h1 className="mb-4">Forgot Password</h1>
                         <div className="form-group">
                             <label htmlFor="email_field">Enter Email</label>
                             <input

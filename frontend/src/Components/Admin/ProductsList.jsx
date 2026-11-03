@@ -95,7 +95,17 @@ const ProductsList = () => {
     //     }
     // }
     const deleteProductHandler = (id) => {
-        dispatch(deleteProduct(id))
+        Swal.fire({
+            title: 'Delete Product',
+            icon: 'info',
+            text: 'Are you sure you want to delete this product? This cannot be undone.',
+            confirmButtonText: 'Delete',
+            showCancelButton: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                dispatch(deleteProduct(id))
+            }
+        })
     }
 
     useEffect(() => {

@@ -110,7 +110,8 @@ const Payment = () => {
             <CheckoutSteps shipping confirmOrder payment />
             <div className="row wrapper">
                 <div className="col-10 col-lg-5">
-                    <form className="shadow-lg" onSubmit={formik.handleSubmit} noValidate>
+                    <form className="shadow-lg auth-card" onSubmit={formik.handleSubmit} noValidate>
+                        <img src="/images/CONN.png" alt="CONN" className="auth-logo" />
                         <h1 className="mb-4">Card Info</h1>
                         <div className="form-group">
                             <label htmlFor="card_num_field">Card Number</label>

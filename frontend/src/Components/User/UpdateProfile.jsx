@@ -151,8 +151,9 @@ const UpdateProfile = () => {
 
             <div className="row wrapper">
                 <div className="col-10 col-lg-5">
-                    <form className="shadow-lg" onSubmit={formik.handleSubmit} encType='multipart/form-data' noValidate>
-                        <h1 className="mt-2 mb-5">Update Profile</h1>
+                    <form className="shadow-lg auth-card" onSubmit={formik.handleSubmit} encType='multipart/form-data' noValidate>
+                        <img src="/images/CONN.png" alt="CONN" className="auth-logo" />
+                        <h1 className="mb-4">Update Profile</h1>
 
                         <div className="form-group">
                             <label htmlFor="email_field">Name</label>
@@ -209,7 +210,7 @@ const UpdateProfile = () => {
                             </div>
                         </div>
 
-                        <button type="submit" className="btn update-btn btn-block mt-4 mb-3" disabled={loading ? true : false} >
+                        <button type="submit" className="btn btn-block py-3" disabled={loading ? true : false} >
                             {loading ? (
                                 <><span className="spinner-border spinner-border-sm mr-2"></span>Updating...</>
                             ) : 'Update'}

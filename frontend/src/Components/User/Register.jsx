@@ -24,6 +24,7 @@ const Register = () => {
 
     const [avatar, setAvatar] = useState(defaultAvatar)
     const [avatarPreview, setAvatarPreview] = useState(defaultAvatar)
+    const [showPassword, setShowPassword] = useState(false)
 
     // const [error, setError] = useState('')
     // const [loading, setLoading] = useState(true)
@@ -122,7 +123,7 @@ const Register = () => {
             <div className="row wrapper">
                 <div className="col-10 col-lg-5">
                     <form className="shadow-lg auth-card" onSubmit={formik.handleSubmit} encType='multipart/form-data' noValidate>
-                        <div className="auth-icon"><i className="fa fa-motorcycle" aria-hidden="true"></i></div>
+                        <img src="/images/CONN.png" alt="CONN" className="auth-logo" />
                         <h1>Create account</h1>
                         <p className="auth-subtitle">Join CONN Moto and start riding</p>
 
@@ -154,12 +155,15 @@ const Register = () => {
 
                         <div className="form-group">
                             <label htmlFor="password_field">Password</label>
-                            <input
-                                type="password"
-                                id="password_field"
-                                className="form-control"
-                                {...formik.getFieldProps('password')}
-                            />
+                            <div className="password-wrapper">
+                                <input
+                                    type={showPassword ? 'text' : 'password'}
+                                    id="password_field"
+                                    className="form-control"
+                                    {...formik.getFieldProps('password')}
+                                />
+                                <button type="button" className="btn btn-outline-secondary" aria-label={showPassword ? 'Hide password' : 'Show password'} onClick={() => setShowPassword(!showPassword)}><i className={showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'}></i></button>
+                            </div>
                             {formik.touched.password && formik.errors.password && (
                                 <small className="text-danger">{formik.errors.password}</small>
                             )}

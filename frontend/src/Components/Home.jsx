@@ -10,15 +10,23 @@ import axios from 'axios'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { getProducts } from '../actions/productActions'
-import { motorcycleCategories } from '../constants/productOptions'
+import { motorcycleCategories, motorcycleBrands } from '../constants/productOptions'
+
+const brandLogos = [
+    { name: 'Honda', image: '/images/Honda.jpg' },
+    { name: 'Yamaha', image: '/images/yamaha.png' },
+    { name: 'Suzuki', image: '/images/Suzuki-Symbol.png' },
+    { name: 'Kawasaki', image: '/images/kawasaski.jpg' }
+]
 
 const Home = () => {
     // console.log(products)
     // const [products, setProducts] = useState([])
-    const [price, setPrice] = useState([0, 10000]);
+    const [price, setPrice] = useState([0, 300000]);
     const [category, setCategory] = useState('')
     const [ratings, setRatings] = useState(0)
     const [numOfReviews, setNumOfReviews] = useState(0)
+    const [brand, setBrand] = useState('')
     // const [loading, setLoading] = useState(true)
     // const [productsCount, setProductsCount] = useState(0)
     // const [resPerPage, setResPerPage] = useState(0)
@@ -37,11 +45,12 @@ const Home = () => {
     if (keyword !== lastKeyword) {
         setLastKeyword(keyword)
         setCurrentPage(1)
+        setProductList([])
     }
 
     let count = productsCount;
 
-    if (keyword || category || ratings || numOfReviews) {
+    if (keyword || category || ratings || numOfReviews || brand) {
         count = filteredProductsCount
     }
 
@@ -64,29 +73,47 @@ const Home = () => {
     const handleChange = (event, newValue) => {
         setPrice(newValue);
         setCurrentPage(1)
+        setProductList([])
     };
 
     const categoryHandler = (value) => {
         setCategory(value)
         setCurrentPage(1)
+        setProductList([])
+    }
+
+    const brandHandler = (value) => {
+        setBrand(value)
+        setCurrentPage(1)
+        setProductList([])
+    }
+
+    // clicking the selected logo again clears the brand
+    const brandLogoHandler = (name) => {
+        brandHandler(brand === name ? '' : name)
+        document.getElementById('product_results').scrollIntoView({ behavior: 'smooth' })
     }
 
     const ratingsHandler = (value) => {
         setRatings(value)
         setCurrentPage(1)
+        setProductList([])
     }
 
     const reviewsHandler = (value) => {
         setNumOfReviews(value)
         setCurrentPage(1)
+        setProductList([])
     }
 
     const clearFiltersHandler = () => {
         setCategory('')
+        setBrand('')
         setRatings(0)
         setNumOfReviews(0)
-        setPrice([0, 10000])
+        setPrice([0, 300000])
         setCurrentPage(1)
+        setProductList([])
     }
 
     function valuetext(price) {
@@ -102,8 +129,8 @@ const Home = () => {
     // }, [keyword, price, currentPage]);
     useEffect(() => {
 
-        dispatch(getProducts(currentPage, keyword, price, category, ratings, numOfReviews))
-    }, [currentPage, keyword, price, category, ratings, numOfReviews]);
+        dispatch(getProducts(currentPage, keyword, price, category, ratings, numOfReviews, brand))
+    }, [currentPage, keyword, price, category, ratings, numOfReviews, brand]);
 
     // page 1 replaces the list, later pages are appended
     useEffect(() => {
@@ -121,7 +148,10 @@ const Home = () => {
         const handleScroll = () => {
             const nearBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 200
             const hasMore = currentPage * resPerPage < count
-            if (nearBottom && hasMore && !loading) {
+            // only ask for the next page once the current page is in the list,
+            // otherwise a filter change jumps to page 2 before page 1 has arrived
+            const pageLoaded = productList.length >= currentPage * resPerPage
+            if (nearBottom && hasMore && pageLoaded && !loading) {
                 setCurrentPage(currentPage + 1)
             }
         }
@@ -133,15 +163,28 @@ const Home = () => {
         return () => {
             window.removeEventListener('scroll', handleScroll)
         }
-    }, [currentPage, resPerPage, count, loading]);
+    }, [currentPage, resPerPage, count, loading, productList]);
 
     return (
         <>
             <MetaData title={keyword ? 'Search Results' : 'For Sale Units'} />
             {!keyword && (
-                <section className="home-hero">
-                    <h1>Find your next <span>ride</span></h1>
-                    <p>Browse motorcycles from top brands. Filter by transmission, price and rating.</p>
+                <section className="brand-section">
+                    <img src="/images/CONN.png" alt="CONN" className="brand-section-logo" />
+                    <h3 className="brand-section-features">Features:</h3>
+                    <div className="brand-logo-bar">
+                        {brandLogos.map(item => (
+                            <button
+                                type="button"
+                                key={item.name}
+                                className={`brand-logo-btn ${brand === item.name ? 'active' : ''}`}
+                                aria-pressed={brand === item.name}
+                                onClick={() => brandLogoHandler(item.name)}
+                            >
+                                <img src={item.image} alt={item.name} />
+                            </button>
+                        ))}
+                    </div>
                 </section>
             )}
             <div className="container container-fluid">
@@ -170,6 +213,19 @@ const Home = () => {
                                         <option key={item} value={item}>{item}</option>
                                     ))}
                                 </select>
+
+                                <label htmlFor="brand_filter" className="filter-label mt-3">Brand</label>
+                                <select
+                                    id="brand_filter"
+                                    className="form-control"
+                                    value={brand}
+                                    onChange={(e) => brandHandler(e.target.value)}
+                                >
+                                    <option value="">Any brand</option>
+                                    {motorcycleBrands.map(item => (
+                                        <option key={item} value={item}>{item}</option>
+                                    ))}
+                                </select>
                             </div>
 
                             <div className="filter-card">
@@ -190,8 +246,8 @@ const Home = () => {
                                                 valueLabelDisplay="off"
                                                 getAriaValueText={valuetext}
                                                 min={0}
-                                                max={10000}
-                                                step={100}
+                                                max={300000}
+                                                step={10000}
                                                 sx={{
                                                     '& .MuiSlider-track': { backgroundColor: '#111111', borderColor: '#111111' },
                                                     '& .MuiSlider-rail': { backgroundColor: '#111111', opacity: 1 },
@@ -277,7 +333,7 @@ const Home = () => {
                         </div>
 
                         <div className="col-12 col-md-9">
-                            <div className="listing-results">
+                            <div className="listing-results" id="product_results">
                                 <h2 className="listing-results-count">{filteredProductsCount || 0} units found</h2>
                                 {keyword && <p className="listing-results-keyword">Results for "{keyword}"</p>}
                             </div>

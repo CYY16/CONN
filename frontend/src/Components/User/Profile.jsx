@@ -47,38 +47,110 @@ const Profile = () => {
                 <>
                     <MetaData title={'Your Profile'} />
 
-                    <h2 className="mt-5 ml-5">My Profile</h2>
-                    <div className="row justify-content-around mt-5 user-info">
-                        <div className="col-12 col-md-3">
-                            <figure className='avatar avatar-profile'>
-                                <img className="rounded-circle img-fluid" src={user.avatar ? user.avatar.url : null} alt={user.name} />
-                            </figure>
-                            <Link to="/me/update" id="edit_profile" className="btn btn-primary btn-block my-5">
-                                Edit Profile
-                            </Link>
+                    <section className="profile-page">
+                        <div className="container py-5">
+                            <div className="row">
+                                <div className="col">
+                                    <nav aria-label="breadcrumb" className="profile-breadcrumb rounded-3 p-3 mb-4">
+                                        <ol className="breadcrumb mb-0">
+                                            <li className="breadcrumb-item"><Link to="/">Home</Link></li>
+                                            <li className="breadcrumb-item active" aria-current="page">Profile</li>
+                                        </ol>
+                                    </nav>
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="col-lg-4">
+                                    <div className="card profile-card mb-4">
+                                        <div className="card-body text-center">
+                                            <img
+                                                src={user.avatar ? user.avatar.url : null}
+                                                alt={user.name}
+                                                className="rounded-circle img-fluid profile-avatar"
+                                                style={{ width: '150px' }}
+                                            />
+                                            <h5 className="my-3">{user.name}</h5>
+                                            <p className="text-muted mb-4">{user.email}</p>
+                                            <div className="d-flex flex-wrap justify-content-center mb-2">
+                                                <Link to="/me/update" className="btn profile-btn m-1">Edit Profile</Link>
+                                                <Link to="/password/update" className="btn profile-btn-outline m-1">Change Password</Link>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {user.role !== 'admin' && (
+                                        <div className="card profile-card mb-4 mb-lg-0">
+                                            <div className="card-body p-0">
+                                                <ul className="list-group list-group-flush rounded-3">
+                                                    <li className="list-group-item p-0">
+                                                        <Link to="/orders/me" className="profile-link d-flex align-items-center p-3">
+                                                            <i className="fa fa-list-alt fa-lg mr-3" aria-hidden="true"></i>
+                                                            <span>My Orders</span>
+                                                        </Link>
+                                                    </li>
+                                                    <li className="list-group-item p-0">
+                                                        <Link to="/orders/me/ongoing" className="profile-link d-flex align-items-center p-3">
+                                                            <i className="fa fa-truck fa-lg mr-3" aria-hidden="true"></i>
+                                                            <span>Ongoing Orders</span>
+                                                        </Link>
+                                                    </li>
+                                                    <li className="list-group-item p-0">
+                                                        <Link to="/orders/me/complete" className="profile-link d-flex align-items-center p-3">
+                                                            <i className="fa fa-check-circle fa-lg mr-3" aria-hidden="true"></i>
+                                                            <span>Completed Orders</span>
+                                                        </Link>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="col-lg-8">
+                                    <div className="card profile-card mb-4">
+                                        <div className="card-body">
+                                            <div className="row">
+                                                <div className="col-sm-3">
+                                                    <p className="mb-0">Full Name</p>
+                                                </div>
+                                                <div className="col-sm-9">
+                                                    <p className="text-muted mb-0">{user.name}</p>
+                                                </div>
+                                            </div>
+                                            <hr />
+                                            <div className="row">
+                                                <div className="col-sm-3">
+                                                    <p className="mb-0">Email</p>
+                                                </div>
+                                                <div className="col-sm-9">
+                                                    <p className="text-muted mb-0">{user.email}</p>
+                                                </div>
+                                            </div>
+                                            <hr />
+                                            <div className="row">
+                                                <div className="col-sm-3">
+                                                    <p className="mb-0">Joined On</p>
+                                                </div>
+                                                <div className="col-sm-9">
+                                                    <p className="text-muted mb-0">{String(user.createdAt).substring(0, 10)}</p>
+                                                </div>
+                                            </div>
+                                            <hr />
+                                            <div className="row">
+                                                <div className="col-sm-3">
+                                                    <p className="mb-0">Role</p>
+                                                </div>
+                                                <div className="col-sm-9">
+                                                    <p className="text-muted mb-0">{user.role}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-
-                        <div className="col-12 col-md-5">
-                            <h4>Full Name</h4>
-                            <p>{user.name}</p>
-
-                            <h4>Email Address</h4>
-                            <p>{user.email}</p>
-
-                            <h4>Joined On</h4>
-                            <p>{String(user.createdAt).substring(0, 10)}</p>
-
-                            {user.role !== 'admin' && (
-                                <Link to="/orders/me" className="btn btn-danger btn-block mt-5">
-                                    My Orders
-                                </Link>
-                            )}
-
-                            <Link to="/password/update" className="btn btn-primary btn-block mt-3">
-                                Change Password
-                            </Link>
-                        </div>
-                    </div>
+                    </section>
                 </>
             )}
         </>

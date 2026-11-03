@@ -52,6 +52,13 @@ class APIFeatures {
             delete queryCopy['category'];
         }
 
+        // the brand is saved in the seller field
+        let brandFilter = {};
+        if (queryCopy['brand']) {
+            brandFilter.seller = queryCopy['brand'];
+            delete queryCopy['brand'];
+        }
+
         let ratingsFilter = {};
         if (queryCopy['ratings[gte]']) {
             ratingsFilter.ratings = {};
@@ -68,7 +75,7 @@ class APIFeatures {
 
         console.log(queryCopy);
 
-        this.query = this.query.find({ ...priceFilter, ...categoryFilter, ...ratingsFilter, ...reviewsFilter });
+        this.query = this.query.find({ ...priceFilter, ...categoryFilter, ...brandFilter, ...ratingsFilter, ...reviewsFilter });
         return this;
     }
 

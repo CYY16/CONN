@@ -23,10 +23,7 @@ export const Header = () => {
         <>
             <nav className="site-header">
                 <Link to="/" className="conn-brand" aria-label="CONN Moto home">
-                    <span className="conn-brand-mark">
-                        <i className="fa fa-motorcycle" aria-hidden="true"></i>
-                    </span>
-                    <span className="conn-brand-name">CONN <span>Moto</span></span>
+                    <img src="/images/CONN.png" alt="CONN" className="conn-logo-img" />
                 </Link>
                 <div className="header-links">
                     <Link to="/" className="header-link">Home</Link>

@@ -16,6 +16,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useDispatch, useSelector } from 'react-redux'
 import { allUsers, deleteUser, clearErrors } from '../../actions/userActions'
 import { DELETE_USER_RESET } from '../../constants/userConstants'
+import Swal from 'sweetalert2'
 
 
 const UsersList = () => {
@@ -95,7 +96,17 @@ const UsersList = () => {
 
 
     const deleteUserHandler = (id) => {
-        dispatch(deleteUser(id))
+        Swal.fire({
+            title: 'Delete User',
+            icon: 'info',
+            text: 'Are you sure you want to delete this user? This cannot be undone.',
+            confirmButtonText: 'Delete',
+            showCancelButton: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                dispatch(deleteUser(id))
+            }
+        })
     }
 
     const columns = [

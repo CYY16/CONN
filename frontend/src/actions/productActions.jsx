@@ -25,7 +25,12 @@ import {
     CLEAR_ERRORS
 } from '../constants/productConstants';
 
-export const getProducts = (currentPage = 1, keyword = '', price, category = '', ratings = 0, numOfReviews = 0) => async (dispatch) => {
+// counts getProducts calls, so an older reply that arrives late can be ignored
+let latestProductsRequest = 0
+
+export const getProducts = (currentPage = 1, keyword = '', price, category = '', ratings = 0, numOfReviews = 0, brand = '') => async (dispatch) => {
+    latestProductsRequest = latestProductsRequest + 1
+    const thisRequest = latestProductsRequest
     try {
         dispatch({
             type: ALL_PRODUCTS_REQUEST
@@ -37,6 +42,10 @@ export const getProducts = (currentPage = 1, keyword = '', price, category = '',
             link = `${import.meta.env.VITE_API}/products?keyword=${keyword}&page=${currentPage}&price[lte]=${price[1]}&price[gte]=${price[0]}&category=${category}`
         }
 
+        if (brand) {
+            link = `${link}&brand=${brand}`
+        }
+
         if (ratings) {
             link = `${link}&ratings[gte]=${ratings}`
         }
@@ -46,12 +55,19 @@ export const getProducts = (currentPage = 1, keyword = '', price, category = '',
         }
         const { data } = await axios.get(link)
         console.log(data)
+        // a newer filter or search was sent while this one was loading
+        if (thisRequest !== latestProductsRequest) {
+            return
+        }
         dispatch({
             type: ALL_PRODUCTS_SUCCESS,
             payload: data
         })
 
     } catch (error) {
+        if (thisRequest !== latestProductsRequest) {
+            return
+        }
         dispatch({
             type: ALL_PRODUCTS_FAIL,
             payload: error.response.data.message

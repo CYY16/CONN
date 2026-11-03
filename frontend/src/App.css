@@ -1691,3 +1691,798 @@ footer {
 .wrapper .btn-outline-dark {
   border-radius: 10px;
 }
+
+/* Password eye */
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper .form-control {
+  padding-right: 45px;
+}
+
+/* .wrapper form .btn forces red and a top margin with !important, so this needs the same */
+.password-wrapper .btn,
+.wrapper form .password-wrapper .btn,
+.wrapper form.auth-card .password-wrapper .btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 45px;
+  margin: 0 !important;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0 !important;
+  border-radius: 0 10px 10px 0;
+  background-color: transparent !important;
+  color: #777777 !important;
+  box-shadow: none !important;
+}
+
+.password-wrapper .btn:hover,
+.wrapper form .password-wrapper .btn:hover {
+  color: var(--conn-red) !important;
+}
+
+/* Brand logo bar */
+.brand-section {
+  padding: 3.5rem 1rem;
+  background: #000000;
+  text-align: center;
+}
+
+.brand-section-title {
+  margin: 0 0 2.75rem;
+  color: var(--conn-white);
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 700;
+}
+
+.brand-logo-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 48px;
+}
+
+.brand-logo-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 300px;
+  height: 170px;
+  padding: 1.5rem;
+  border: 3px solid transparent;
+  border-radius: 8px;
+  background: var(--conn-white);
+  box-shadow: 0 6px 18px rgb(255 255 255 / 8%);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+/* the logo files have wide white margins, so let the image fill the card */
+.brand-logo-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.brand-logo-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgb(255 255 255 / 14%);
+}
+
+.brand-logo-btn:focus {
+  outline: none;
+}
+
+.brand-logo-btn:focus-visible {
+  border-color: #777777;
+}
+
+.brand-logo-btn.active {
+  border-color: var(--conn-red);
+  box-shadow: 0 0 0 3px rgb(237 16 0 / 35%), 0 10px 24px rgb(237 16 0 / 25%);
+}
+
+@media (max-width: 1399px) {
+  .brand-logo-bar {
+    gap: 24px;
+  }
+
+  .brand-logo-btn {
+    width: 240px;
+    height: 140px;
+  }
+}
+
+@media (max-width: 575px) {
+  .brand-section {
+    padding: 2.5rem 1rem;
+  }
+
+  .brand-section-title {
+    margin-bottom: 1.5rem;
+  }
+
+  .brand-logo-bar {
+    gap: 16px;
+  }
+
+  .brand-logo-btn {
+    width: calc(50% - 8px);
+    height: 110px;
+    padding: 1rem;
+  }
+}
+
+/* Brands section gradient */
+/* CONN.png has wide empty space above and below the logo, so each image gets a
+   wide, short box and object-fit: cover trims that space instead of shrinking the logo */
+.conn-brand .conn-logo-img {
+  display: block;
+  flex-shrink: 0;
+  width: 260px;
+  height: 52px;
+  object-fit: cover;
+}
+
+.auth-card .auth-logo {
+  display: block;
+  width: 340px;
+  max-width: 100%;
+  height: 70px;
+  margin: 0 auto 0.75rem;
+  object-fit: cover;
+}
+
+/* same gradient the old "Find your next ride" hero used (commit 3b7e423) */
+.brand-section {
+  margin: 24px clamp(1rem, 4vw, 3.5rem) 0;
+  padding: 24px;
+  border-radius: 12px;
+  background: linear-gradient(120deg, #111111 0%, #2a2a2a 65%, #5a0a05 100%);
+}
+
+.brand-section .brand-section-logo {
+  display: block;
+  width: 400px;
+  max-width: 100%;
+  height: 84px;
+  margin: 0 auto 0.75rem;
+  object-fit: cover;
+}
+
+@media (max-width: 575px) {
+  .conn-brand .conn-logo-img {
+    width: 200px;
+    height: 40px;
+  }
+
+  .auth-card .auth-logo {
+    width: 260px;
+    height: 54px;
+  }
+
+  .brand-section .brand-section-logo {
+    width: 280px;
+    height: 58px;
+  }
+}
+
+.brand-section .brand-section-features {
+  margin: 0 0 1.25rem;
+  color: var(--conn-white);
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.brand-section .brand-logo-btn {
+  background: var(--conn-white);
+  box-shadow: 0 6px 18px rgb(0 0 0 / 35%);
+}
+
+.brand-section .brand-logo-btn:hover {
+  box-shadow: 0 10px 24px rgb(0 0 0 / 45%);
+}
+
+.brand-section .brand-logo-btn.active {
+  border-color: var(--conn-red);
+  box-shadow: 0 0 0 3px rgb(237 16 0 / 45%), 0 10px 24px rgb(0 0 0 / 45%);
+}
+
+/* the padded section is narrower, so use the smaller cards sooner to keep 4 in a row */
+@media (min-width: 576px) and (max-width: 1599px) {
+  .brand-section .brand-logo-bar {
+    gap: 24px;
+  }
+
+  .brand-section .brand-logo-btn {
+    width: 240px;
+    height: 140px;
+  }
+}
+
+/* Form cards: other forms reuse the Login/Register .auth-card */
+/* .auth-card .form-control is fixed at 3rem tall, which would squash the product description */
+.auth-card textarea.form-control {
+  height: auto;
+}
+
+/* product forms have many fields, so only the card width changes */
+@media (min-width: 992px) {
+  .wrapper .form-card-wide {
+    flex: 0 0 100%;
+    max-width: 760px;
+  }
+}
+
+/* Profile page */
+.profile-page {
+  background-color: #eee;
+}
+
+/* the global nav rule adds a dark background and red bottom border meant for the header */
+nav.profile-breadcrumb {
+  border-bottom: 0;
+  border-radius: 8px;
+  background: var(--conn-white);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+}
+
+.profile-breadcrumb .breadcrumb {
+  padding: 0;
+  background: transparent;
+}
+
+.profile-breadcrumb .breadcrumb-item a {
+  color: var(--conn-red);
+}
+
+.profile-breadcrumb .breadcrumb-item.active {
+  color: var(--conn-muted);
+}
+
+/* the global .card is height 100% and .card-body has no left padding, so undo both here */
+.card.profile-card {
+  height: auto;
+  overflow: hidden;
+  border: 0;
+  border-top: 4px solid var(--conn-red);
+  border-radius: 8px;
+  background: var(--conn-white);
+  box-shadow: 0 4px 14px rgb(0 0 0 / 8%);
+}
+
+.profile-card .card-body {
+  padding-left: 1.25rem;
+}
+
+.profile-card .profile-avatar {
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.profile-card .btn.profile-btn {
+  border: 1px solid var(--conn-red);
+  background-color: var(--conn-red);
+  color: var(--conn-white);
+}
+
+.profile-card .btn.profile-btn:hover,
+.profile-card .btn.profile-btn:focus {
+  border-color: #c90d00;
+  background-color: #c90d00;
+  color: var(--conn-white);
+}
+
+.profile-card .btn.profile-btn-outline {
+  border: 1px solid var(--conn-red);
+  background-color: transparent;
+  color: var(--conn-red);
+}
+
+.profile-card .btn.profile-btn-outline:hover,
+.profile-card .btn.profile-btn-outline:focus {
+  background-color: var(--conn-red);
+  color: var(--conn-white);
+}
+
+.profile-card .profile-link {
+  color: var(--conn-black);
+  text-decoration: none;
+}
+
+.profile-card .profile-link .fa {
+  width: 1.5rem;
+  color: var(--conn-red);
+  text-align: center;
+}
+
+.profile-card .profile-link:hover,
+.profile-card .profile-link:focus,
+.profile-card .profile-link.active {
+  background-color: #fdecea;
+  color: var(--conn-black);
+  text-decoration: none;
+}
+
+/* Product page */
+.product-page .product-main-image {
+  display: block;
+  width: 100%;
+  height: 400px;
+  object-fit: contain;
+  background: #f8f9fa;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 10%);
+}
+
+.product-page .product-thumbs {
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.product-page .product-thumb {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border: 2px solid #e3e3e3;
+  background: #f8f9fa;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.product-page .product-thumb:hover {
+  border-color: #b5b5b5;
+  transform: translateY(-2px);
+}
+
+.product-page .product-thumb.active {
+  border-color: var(--conn-red);
+}
+
+.product-page .product-page-name {
+  margin-bottom: 0.5rem;
+  font-weight: 800;
+}
+
+.product-page .product-page-price {
+  margin-bottom: 0.75rem;
+  color: var(--conn-red);
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.product-page .product-page-reviews {
+  color: var(--conn-muted);
+  font-size: 0.9rem;
+}
+
+.product-page .product-stock-badge {
+  padding: 0.45em 0.8em;
+  color: var(--conn-white);
+  font-size: 0.85rem;
+}
+
+.product-page .product-stock-badge.in-stock {
+  background-color: #1e8e3e;
+}
+
+.product-page .product-stock-badge.out-of-stock {
+  background-color: var(--conn-red);
+}
+
+.product-page .product-page-description {
+  color: #444444;
+  line-height: 1.6;
+}
+
+.product-page .product-page-meta {
+  font-size: 0.95rem;
+}
+
+.product-page .product-page-meta span {
+  display: inline-block;
+  min-width: 7.5rem;
+  color: var(--conn-muted);
+  font-weight: 600;
+}
+
+/* the quantity group; .count is still read by increaseQty / decreaseQty */
+.product-page .product-qty {
+  flex-wrap: nowrap;
+  width: 120px;
+}
+
+.product-page .product-qty .count {
+  height: calc(1.5em + 1rem + 2px);
+  padding: 0;
+  border: 1px solid #ced4da;
+  font-weight: 700;
+}
+
+.product-page .product-qty .product-qty-btn {
+  border: 1px solid #ced4da;
+  background: #f8f9fa;
+  color: var(--conn-black);
+  font-weight: 700;
+}
+
+.product-page .product-qty .product-qty-btn:hover {
+  background: #fdecea;
+  color: var(--conn-red);
+}
+
+.product-page .product-cart-btn,
+.product-page .product-review-btn {
+  border: 1px solid var(--conn-red);
+  border-radius: 8px;
+  background-color: var(--conn-red);
+  color: var(--conn-white);
+  font-weight: 700;
+}
+
+.product-page .product-cart-btn {
+  padding: 0.6rem 2rem;
+}
+
+.product-page .product-cart-btn:hover,
+.product-page .product-cart-btn:focus,
+.product-page .product-review-btn:hover,
+.product-page .product-review-btn:focus {
+  border-color: #c90d00;
+  background-color: #c90d00;
+  color: var(--conn-white);
+}
+
+.product-page .product-cart-btn:disabled {
+  border-color: #b5b5b5;
+  background-color: #b5b5b5;
+}
+
+.product-page .product-login-alert {
+  border: 1px solid #f5c2c0;
+  background: #fdecea;
+  color: #9b0b00;
+}
+
+.product-page .product-review-modal {
+  border: 0;
+  border-top: 4px solid var(--conn-red);
+  border-radius: 8px;
+}
+
+/* the global .card is height 100% with no left padding, and ListReviews sets w-75 */
+.product-page .card.product-reviews-card {
+  height: auto;
+  border: 0;
+  border-top: 4px solid var(--conn-red);
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 8%);
+}
+
+.product-page .product-reviews-card .card-body {
+  padding-left: 1.25rem;
+}
+
+.product-page .product-reviews-card .reviews {
+  width: 100% !important;
+}
+
+@media (max-width: 767px) {
+  .product-page .product-main-image {
+    height: 280px;
+  }
+}
+
+/* Orders page */
+.orders-page {
+  background-color: #eee;
+}
+
+.orders-page .orders-page-title {
+  font-weight: 800;
+}
+
+.orders-page .orders-empty p {
+  color: #6c757d;
+  font-size: 1.1rem;
+}
+
+.orders-page .orders-shop-btn,
+.orders-page .orders-shop-btn:hover {
+  border: 1px solid var(--conn-red);
+  background-color: var(--conn-red);
+  color: var(--conn-white);
+}
+
+.orders-page .orders-shop-btn:hover {
+  border-color: #c90d00;
+  background-color: #c90d00;
+}
+
+.orders-page .order-card {
+  margin-bottom: 24px;
+  border-top: 4px solid var(--conn-red);
+  border-radius: 16px;
+  background: var(--conn-white);
+  box-shadow: 0 4px 14px rgb(0 0 0 / 8%);
+}
+
+.orders-page .order-card-header {
+  padding: 24px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.orders-page .order-card-id {
+  word-break: break-all;
+}
+
+.orders-page .order-card-link {
+  color: var(--conn-red);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.orders-page .order-card-link:hover {
+  color: #c90d00;
+}
+
+.orders-page .order-card-body {
+  padding: 24px;
+}
+
+.orders-page .order-item {
+  gap: 12px;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.orders-page .order-item-text {
+  min-width: 180px;
+}
+
+.orders-page .order-item-image {
+  width: 100px;
+  height: 80px;
+  object-fit: contain;
+  background: #f8f9fa;
+}
+
+.orders-page .order-card-total {
+  color: var(--conn-red);
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.orders-page .order-card-footer {
+  padding: 24px;
+  border-top: 1px solid #eeeeee;
+}
+
+.orders-page .order-card-btn {
+  border: 1px solid var(--conn-red);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--conn-red);
+  font-weight: 700;
+}
+
+.orders-page .order-card-btn:hover {
+  background-color: var(--conn-red);
+  color: var(--conn-white);
+}
+
+.order-stepper {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.order-stepper li {
+  flex: 1;
+  position: relative;
+  color: #9aa0a6;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.order-stepper li .step-dot {
+  display: block;
+  position: relative;
+  z-index: 1;
+  width: 29px;
+  height: 29px;
+  margin: 0 auto 8px;
+  border-radius: 50%;
+  background: #cfd4d9;
+  color: #fff;
+  font-size: 12px;
+  line-height: 29px;
+}
+
+/* line from this step's dot to the next one */
+.order-stepper li::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  top: 14px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background: #cfd4d9;
+}
+
+.order-stepper li:last-child::after {
+  display: none;
+}
+
+.order-stepper li.active {
+  color: #212529;
+}
+
+.order-stepper li.active .step-dot {
+  background: var(--conn-red);
+}
+
+/* red only when the next step is reached too */
+.order-stepper li.done::after {
+  background: var(--conn-red);
+}
+
+@media (max-width: 575px) {
+  .orders-page .order-card-header,
+  .orders-page .order-card-body,
+  .orders-page .order-card-footer {
+    padding: 16px;
+  }
+
+  .order-stepper li {
+    font-size: 11px;
+  }
+}
+
+/* Order details page */
+/* reuses .orders-page, .order-card, .order-item and .order-stepper from the Orders page */
+.order-details-page .order-details-section {
+  padding: 24px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.order-details-page .order-details-heading {
+  margin-bottom: 12px;
+  font-weight: 800;
+}
+
+.order-details-page .order-item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.order-details-page .order-item-link {
+  color: var(--conn-black);
+}
+
+.order-details-page .order-item-link:hover {
+  color: var(--conn-red);
+}
+
+.order-details-page .order-status-badge {
+  padding: 0.45em 0.8em;
+  color: var(--conn-white);
+  font-size: 0.85rem;
+}
+
+.order-details-page .order-status-badge.processing {
+  background-color: var(--conn-red);
+}
+
+.order-details-page .order-status-badge.delivered {
+  background-color: #1e8e3e;
+}
+
+.order-details-page .order-status-badge.other {
+  background-color: #495057;
+}
+
+@media (max-width: 575px) {
+  .order-details-page .order-details-section {
+    padding: 16px;
+  }
+}
+
+/* Admin order page */
+/* reuses .orders-page, .order-card, .order-stepper and the .order-details-page sections and badge */
+.admin-order-page .admin-order-status .form-control {
+  min-width: 200px;
+  height: calc(1.5em + 0.75rem + 2px);
+  border-radius: 8px;
+}
+
+.admin-order-page .admin-order-status .btn {
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+/* About page */
+/* reuses .orders-page (grey background) and .order-card from the Orders page */
+.about-us-page .about-card {
+  padding: 24px;
+}
+
+.about-us-page .about-card-title {
+  margin-bottom: 12px;
+  font-weight: 800;
+}
+
+.about-us-page .about-icon {
+  width: 1.25rem;
+  color: var(--conn-red);
+  text-align: center;
+}
+
+@media (max-width: 575px) {
+  .about-us-page .about-card {
+    padding: 16px;
+  }
+}
+
+/* Footer */
+/* the older footer rules add a top margin, a light border and grey text */
+footer.site-footer {
+  margin-top: 0;
+  padding: 2.5rem 0 0;
+  border-top: 0;
+  background: #212529;
+  color: #cfd4d9;
+}
+
+footer.site-footer .site-footer-brand {
+  color: var(--conn-white);
+  font-weight: 800;
+}
+
+footer.site-footer .site-footer-heading {
+  margin-bottom: 0.75rem;
+  color: var(--conn-white);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+footer.site-footer li {
+  margin-bottom: 0.4rem;
+}
+
+footer.site-footer a {
+  color: #cfd4d9;
+}
+
+footer.site-footer a:hover,
+footer.site-footer a:focus {
+  color: var(--conn-red);
+  text-decoration: none;
+}
+
+footer.site-footer .site-footer-bottom {
+  padding: 1rem;
+  border-top: 1px solid #343a40;
+  color: #8f969c;
+  text-align: center;
+}
+
+@media (max-width: 767px) {
+  footer.site-footer {
+    text-align: center;
+  }
+}

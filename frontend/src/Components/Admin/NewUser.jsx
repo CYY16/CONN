@@ -18,6 +18,7 @@ const NewUser = () => {
 
     const [avatar, setAvatar] = useState(defaultAvatar)
     const [avatarPreview, setAvatarPreview] = useState(defaultAvatar)
+    const [showPassword, setShowPassword] = useState(false)
 
     const navigate = useNavigate()
 
@@ -97,8 +98,10 @@ const NewUser = () => {
                 </div>
 
                 <div className="col-12 col-md-10">
-                    <div className="wrapper my-5">
-                        <form className="shadow-lg" onSubmit={formik.handleSubmit} encType='multipart/form-data' noValidate>
+                    <div className="row wrapper">
+                        <div className="col-10 col-lg-5">
+                        <form className="shadow-lg auth-card" onSubmit={formik.handleSubmit} encType='multipart/form-data' noValidate>
+                            <img src="/images/CONN.png" alt="CONN" className="auth-logo" />
                             <h1 className="mb-4">New User</h1>
 
                             <div className="form-group">
@@ -119,7 +122,10 @@ const NewUser = () => {
 
                             <div className="form-group">
                                 <label htmlFor="password_field">Password</label>
-                                <input type="password" id="password_field" className="form-control" {...formik.getFieldProps('password')} />
+                                <div className="password-wrapper">
+                                    <input type={showPassword ? 'text' : 'password'} id="password_field" className="form-control" {...formik.getFieldProps('password')} />
+                                    <button type="button" className="btn btn-outline-secondary" aria-label={showPassword ? 'Hide password' : 'Show password'} onClick={() => setShowPassword(!showPassword)}><i className={showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'}></i></button>
+                                </div>
                                 {formik.touched.password && formik.errors.password && (
                                     <small className="text-danger">{formik.errors.password}</small>
                                 )}
@@ -162,6 +168,7 @@ const NewUser = () => {
                                 ) : 'CREATE'}
                             </button>
                         </form>
+                        </div>
                     </div>
                 </div>
             </div>

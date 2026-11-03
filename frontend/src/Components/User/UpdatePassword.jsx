@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from "react-router-dom";
 import MetaData from '../Layout/MetaData';
 import { toast } from 'react-toastify';
@@ -15,6 +15,9 @@ import { UPDATE_PASSWORD_RESET } from '../../constants/userConstants'
 
 
 const UpdatePassword = () => {
+    const [showOldPassword, setShowOldPassword] = useState(false)
+    const [showNewPassword, setShowNewPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const dispatch = useDispatch()
     const { error, isUpdated, loading } = useSelector(state => state.user)
 
@@ -107,16 +110,20 @@ const UpdatePassword = () => {
 
             <div className="row wrapper">
                 <div className="col-10 col-lg-5">
-                    <form className="shadow-lg" onSubmit={formik.handleSubmit} noValidate>
-                        <h1 className="mt-2 mb-5">Update Password</h1>
+                    <form className="shadow-lg auth-card" onSubmit={formik.handleSubmit} noValidate>
+                        <img src="/images/CONN.png" alt="CONN" className="auth-logo" />
+                        <h1 className="mb-4">Update Password</h1>
                         <div className="form-group">
                             <label htmlFor="old_password_field">Old Password</label>
-                            <input
-                                type="password"
-                                id="old_password_field"
-                                className="form-control"
-                                {...formik.getFieldProps('oldPassword')}
-                            />
+                            <div className="password-wrapper">
+                                <input
+                                    type={showOldPassword ? 'text' : 'password'}
+                                    id="old_password_field"
+                                    className="form-control"
+                                    {...formik.getFieldProps('oldPassword')}
+                                />
+                                <button type="button" className="btn btn-outline-secondary" aria-label={showOldPassword ? 'Hide password' : 'Show password'} onClick={() => setShowOldPassword(!showOldPassword)}><i className={showOldPassword ? 'fa fa-eye-slash' : 'fa fa-eye'}></i></button>
+                            </div>
                             {formik.touched.oldPassword && formik.errors.oldPassword && (
                                 <small className="text-danger">{formik.errors.oldPassword}</small>
                             )}
@@ -124,12 +131,15 @@ const UpdatePassword = () => {
 
                         <div className="form-group">
                             <label htmlFor="new_password_field">New Password</label>
-                            <input
-                                type="password"
-                                id="new_password_field"
-                                className="form-control"
-                                {...formik.getFieldProps('password')}
-                            />
+                            <div className="password-wrapper">
+                                <input
+                                    type={showNewPassword ? 'text' : 'password'}
+                                    id="new_password_field"
+                                    className="form-control"
+                                    {...formik.getFieldProps('password')}
+                                />
+                                <button type="button" className="btn btn-outline-secondary" aria-label={showNewPassword ? 'Hide password' : 'Show password'} onClick={() => setShowNewPassword(!showNewPassword)}><i className={showNewPassword ? 'fa fa-eye-slash' : 'fa fa-eye'}></i></button>
+                            </div>
                             {formik.touched.password && formik.errors.password && (
                                 <small className="text-danger">{formik.errors.password}</small>
                             )}
@@ -137,18 +147,21 @@ const UpdatePassword = () => {
 
                         <div className="form-group">
                             <label htmlFor="confirm_password_field">Confirm New Password</label>
-                            <input
-                                type="password"
-                                id="confirm_password_field"
-                                className="form-control"
-                                {...formik.getFieldProps('confirmPassword')}
-                            />
+                            <div className="password-wrapper">
+                                <input
+                                    type={showConfirmPassword ? 'text' : 'password'}
+                                    id="confirm_password_field"
+                                    className="form-control"
+                                    {...formik.getFieldProps('confirmPassword')}
+                                />
+                                <button type="button" className="btn btn-outline-secondary" aria-label={showConfirmPassword ? 'Hide password' : 'Show password'} onClick={() => setShowConfirmPassword(!showConfirmPassword)}><i className={showConfirmPassword ? 'fa fa-eye-slash' : 'fa fa-eye'}></i></button>
+                            </div>
                             {formik.touched.confirmPassword && formik.errors.confirmPassword && (
                                 <small className="text-danger">{formik.errors.confirmPassword}</small>
                             )}
                         </div>
 
-                        <button type="submit" className="btn update-btn btn-block mt-4 mb-3" disabled={loading ? true : false} >
+                        <button type="submit" className="btn btn-block py-3" disabled={loading ? true : false} >
                             {loading ? (
                                 <><span className="spinner-border spinner-border-sm mr-2"></span>Updating...</>
                             ) : 'Update Password'}

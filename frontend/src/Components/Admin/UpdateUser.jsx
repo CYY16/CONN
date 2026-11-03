@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from "react-router-dom";
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
@@ -14,6 +14,8 @@ import { updateUser, getUserDetails, clearErrors } from '../../actions/userActio
 import { UPDATE_USER_RESET } from '../../constants/userConstants'
 
 const UpdateUser = () => {
+    const [showNewPassword, setShowNewPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const dispatch = useDispatch();
     let navigate = useNavigate();
 
@@ -155,8 +157,9 @@ const UpdateUser = () => {
                 <div className="col-12 col-md-10">
                     <div className="row wrapper">
                         <div className="col-10 col-lg-5">
-                            <form className="shadow-lg" onSubmit={formik.handleSubmit} noValidate>
-                                <h1 className="mt-2 mb-5">Update User</h1>
+                            <form className="shadow-lg auth-card" onSubmit={formik.handleSubmit} noValidate>
+                                <img src="/images/CONN.png" alt="CONN" className="auth-logo" />
+                                <h1 className="mb-4">Update User</h1>
                                 <div className="form-group">
                                     <label htmlFor="name_field">Name</label>
                                     <input
@@ -197,31 +200,37 @@ const UpdateUser = () => {
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="password_field">New Password (leave blank to keep current)</label>
-                                    <input
-                                        type="password"
-                                        id="password_field"
-                                        className="form-control"
-                                        autoComplete="new-password"
-                                        {...formik.getFieldProps('password')}
-                                    />
+                                    <div className="password-wrapper">
+                                        <input
+                                            type={showNewPassword ? 'text' : 'password'}
+                                            id="password_field"
+                                            className="form-control"
+                                            autoComplete="new-password"
+                                            {...formik.getFieldProps('password')}
+                                        />
+                                        <button type="button" className="btn btn-outline-secondary" aria-label={showNewPassword ? 'Hide password' : 'Show password'} onClick={() => setShowNewPassword(!showNewPassword)}><i className={showNewPassword ? 'fa fa-eye-slash' : 'fa fa-eye'}></i></button>
+                                    </div>
                                     {formik.touched.password && formik.errors.password && (
                                         <small className="text-danger">{formik.errors.password}</small>
                                     )}
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="confirm_password_field">Confirm New Password</label>
-                                    <input
-                                        type="password"
-                                        id="confirm_password_field"
-                                        className="form-control"
-                                        autoComplete="new-password"
-                                        {...formik.getFieldProps('confirmPassword')}
-                                    />
+                                    <div className="password-wrapper">
+                                        <input
+                                            type={showConfirmPassword ? 'text' : 'password'}
+                                            id="confirm_password_field"
+                                            className="form-control"
+                                            autoComplete="new-password"
+                                            {...formik.getFieldProps('confirmPassword')}
+                                        />
+                                        <button type="button" className="btn btn-outline-secondary" aria-label={showConfirmPassword ? 'Hide password' : 'Show password'} onClick={() => setShowConfirmPassword(!showConfirmPassword)}><i className={showConfirmPassword ? 'fa fa-eye-slash' : 'fa fa-eye'}></i></button>
+                                    </div>
                                     {formik.touched.confirmPassword && formik.errors.confirmPassword && (
                                         <small className="text-danger">{formik.errors.confirmPassword}</small>
                                     )}
                                 </div>
-                                <button type="submit" className="btn update-btn btn-block mt-4 mb-3" disabled={loading ? true : false}>
+                                <button type="submit" className="btn btn-block py-3" disabled={loading ? true : false}>
                                     {loading ? (
                                         <><span className="spinner-border spinner-border-sm mr-2"></span>Updating...</>
                                     ) : 'Update'}

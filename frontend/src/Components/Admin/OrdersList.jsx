@@ -12,6 +12,7 @@ import { DataGrid, } from '@mui/x-data-grid'
 import { useDispatch, useSelector } from 'react-redux'
 import { allOrders, clearErrors, deleteOrder } from '../../actions/orderActions'
 import { DELETE_ORDER_RESET } from '../../constants/orderConstants'
+import Swal from 'sweetalert2'
 
 
 const OrdersList = ({ history = false }) => {
@@ -86,7 +87,17 @@ const OrdersList = ({ history = false }) => {
         }
     }, [dispatch, error, isDeleted])
     const deleteOrderHandler = (id) => {
-        dispatch(deleteOrder(id))
+        Swal.fire({
+            title: 'Delete Order',
+            icon: 'info',
+            text: 'Are you sure you want to delete this order? This cannot be undone.',
+            confirmButtonText: 'Delete',
+            showCancelButton: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                dispatch(deleteOrder(id))
+            }
+        })
     }
 
     const columns = [

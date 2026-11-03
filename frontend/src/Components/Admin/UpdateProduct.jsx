@@ -190,8 +190,10 @@ const UpdateProduct = () => {
                 </div>
                 <div className="col-12 col-md-10">
                     <>
-                        <div className="wrapper my-5">
-                            <form className="shadow-lg" onSubmit={formik.handleSubmit} encType='multipart/form-data' noValidate>
+                        <div className="row wrapper">
+                            <div className="col-10 col-lg-5 form-card-wide">
+                            <form className="shadow-lg auth-card" onSubmit={formik.handleSubmit} encType='multipart/form-data' noValidate>
+                                <img src="/images/CONN.png" alt="CONN" className="auth-logo" />
                                 <h1 className="mb-4">Update Product</h1>
                                 <div className="form-group">
                                     <label htmlFor="name_field">Name</label>
@@ -303,6 +305,7 @@ const UpdateProduct = () => {
                                     ) : 'UPDATE'}
                                 </button>
                             </form>
+                            </div>
                         </div>
                     </>
                 </div>
